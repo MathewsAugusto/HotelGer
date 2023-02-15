@@ -1,0 +1,16 @@
+<form class="box-column"  action="" method="post">
+    <h1 style="margin-bottom: 24px;">Adicionando novo Produto</h1>
+        <input style="margin-bottom: 24px;" type="text" name="nome" value="{{value_nome}}" placeholder="Nome Produto"
+            required>
+        <input style="margin-bottom: 24px;" type="text" name="valor" value="{{value_valor}}" id="" placeholder="0,00"
+            onKeyPress="return(moeda(this, '.', ',' ,event))" required>
+        <div><label for="status">Status</label>
+            <input type="checkbox" name="status" id="" {{checked}}>
+        </div>
+
+        <div >
+            <button style="margin-top: 24px;" class="btn-add-tipo" type="submit">
+               <strong>Salvar</strong> 
+            </button>
+        </div>
+</form>

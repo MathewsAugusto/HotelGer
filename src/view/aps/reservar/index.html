@@ -1,0 +1,24 @@
+<div class="container">
+    <form action="" method="post">
+        <h3 style="margin-bottom:16px ;">Ap/Quarto: {{numero}}</h3>
+        <h3>Data Reserva: {{datareserva}} </h3>
+        <div class="box">
+            <div class="box-form" style="margin: 24px;">
+                <h2>Data Entrada: </h2><input type="date" name="dateentrada" autofocus required>
+
+                <h2>Hora Entrada: </h2><input type="time" name="horaentrada" autofocus required>
+            </div>
+
+            <div class="box-form" style="margin: 24px;">
+                <h2>Data Saída: </h2><input type="date" name="datesaida" autofocus required>
+
+                <h2>Hora Saída: </h2><input type="time" name="horasaida" autofocus required>
+            </div>
+        </div>
+        <input style="margin-top: 34px;" type="number" name="quantidade" placeholder="Diárias" id="" required>
+        {{item}}
+        
+            <button  class="btn-hosp">Hospedar 🛏</button>
+       
+    </form>
+</div>
