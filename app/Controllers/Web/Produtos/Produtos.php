@@ -33,7 +33,7 @@ class Produtos
             'lista' => $itens
         ]);
 
-        return Page::getPage($container);
+        return Page::getPage($container, $request);
     }
 
     /**
@@ -51,7 +51,7 @@ class Produtos
             'value_valor' => ''
         ]);
 
-        return Page::getPage($container);
+        return Page::getPage($container, $request);
     }
 
     /**
@@ -94,7 +94,7 @@ class Produtos
             'descricao' => $pro->nome
         ]);
 
-        return Page::getPage($container);
+        return Page::getPage($container, $request);
     }
 
     /**
@@ -132,7 +132,7 @@ class Produtos
             'checked'    => $pro->status == 1 ? 'checked' : ''
         ]);
 
-        return Page::getPage($container);
+        return Page::getPage($container, $request);
     }
 
     /**

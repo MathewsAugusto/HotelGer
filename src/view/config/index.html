@@ -1,0 +1,26 @@
+{{btn-add}}
+
+<form action="{{URL}}/login/senha" method="post">
+    <div class="box">
+        <div class="box-column">
+            <h1 style="margin-bottom: 12px;">Altera senha de acesso</h1>
+            <label for="atual">Digite sua senha atual</label>
+            <input type="password" name="atual" required>
+
+            <label for="atual" style="margin-top: 24px;">Nova Senha</label>
+            <input type="password" name="nova" required>
+
+            <label for="atual" style="margin-top: 8px;">Confirme a senha</label>
+            <input type="password" name="nova2" required>
+
+            <button class="btn-pay" style="margin-top: 24px;">
+                <h1>Mudar senha</h1>
+            </button>
+
+        </div>
+    </div>
+</form>
+<hr>
+<div>
+    {{listaUsuarios}}
+</div>

@@ -35,6 +35,12 @@ class Apartamentos
         return self::getAps("numero_ap = '$numeroAp' AND status < 2");
     }
 
+    public static function getRecibo($numeroAp)
+    {
+        return self::getAps("codigo = '$numeroAp' AND status = 2");
+    }
+
+
     public static function getApsOcupados()
     {
         return self::getAps("status = 1");
@@ -79,7 +85,8 @@ class Apartamentos
             "codigo = $this->codigo",
             [
                 'tipo_pagamento' => $this->tipo_pagamento,
-                'status' => 2
+                'status' => $this->status,
+                'data_pag' => $this->data_pag
             ]
         );
     }

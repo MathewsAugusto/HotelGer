@@ -17,7 +17,7 @@ class Main
      *
      * @param Request5 $request
      */
-    public static function getQuartosAps()
+    public static function getQuartosAps($request)
     {
         $quartosOcupado = Apartamentos::getApsOcupados();
         $quartosReservados = Apartamentos::getApsRervados();
@@ -65,7 +65,7 @@ class Main
                 );
             }
         }
-        return Page::getPage($container);
+        return Page::getPage($container, $request);
     }
 
 
@@ -140,17 +140,18 @@ class Main
                 'clientes' => $contentClientes,
                 'tablepro' => $table,
                 'codigo'  => $codigo,
-                'numeroap' => $ap->numero_ap
+                'numeroap' => $ap->numero_ap,
+                'button'   => $ap->status == 0 ? View::render('aps/button',['numeroap'=>$ap->numero_ap]) : ''
+                
 
             ]);
 
             $content = View::render('aps/index', ['content' =>  $ativado]);
         }
 
-        return View::render('page/index', [
-            'menu' => Page::rendeMenu(),
-            'container' => $content
-        ]);
+        return Page::getPage($content, $request);
+           
+    
     }
 
     /**

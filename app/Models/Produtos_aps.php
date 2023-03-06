@@ -26,7 +26,7 @@ class Produtos_aps
     public static function getProdutosbyAps($codigo_ap)
     {
        return (new Database('produto_ap as proap JOIN produtos as pro ON proap.codigo_pro = pro.codigo'))
-       ->select("codigo_ap = '$codigo_ap'", null, null, 'proap.codigo, pro.nome, pro.valor, proap.quantidade as quantidade');
+       ->select("codigo_ap = '$codigo_ap'", null, null, 'proap.codigo, pro.nome, proap.valor, proap.quantidade as quantidade');
     }
 
    

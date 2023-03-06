@@ -29,7 +29,7 @@ class Tipos
             'lista' => $lista
         ]);
 
-        return Page::getPage($content);
+        return Page::getPage($content, $request);
     }
 
     /**
@@ -45,7 +45,7 @@ class Tipos
             'max'      =>""
         ]);
         
-        return Page::getPage($form); 
+        return Page::getPage($form, $request); 
 
         
     }
@@ -82,7 +82,7 @@ class Tipos
     {
         $tipo = Tipo_quartos::getByCodigo($codigo)->fetchObject(Tipo_quartos::class);
         if(!$tipo instanceof Tipo_quartos){
-            return Page::getPage('<h3>Não existe</h3>');
+            return Page::getPage('<h3>Não existe</h3>', $request);
         }
 
         $content = View::render('tipos/form', [
@@ -92,7 +92,7 @@ class Tipos
 
         ]);
 
-        return Page::getPage($content);
+        return Page::getPage($content, $request);
         
     }
 
@@ -106,7 +106,7 @@ class Tipos
     {
         $tipo =  Tipo_quartos::getByCodigo($codigo)->fetchObject(Tipo_quartos::class);
         if(!$tipo instanceof Tipo_quartos){
-            return Page::getPage('<h3>Não existe</h3>');
+            return Page::getPage('<h3>Não existe</h3>', $request);
         }
         $postVars = $request->getPostVars();
         $tipo->descricao = $postVars['descricao'];

@@ -1,3 +1,12 @@
+var x = document.getElementById("btn-x");
+var alert = document.getElementById("div-alert");
+
+x.addEventListener('click', ()=>{
+alert.parentNode.removeChild(alert)
+})
+
+
+
 function formatarCpf(event) {
     let tecla = event.keyCode;
     let valor = event.target.value;

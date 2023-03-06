@@ -1,0 +1,57 @@
+<form action="" method="post">
+    <div class="box card-form">
+        <div class="box-column" style="margin-right: 24px;">
+            <h2>{{tipo}}</h2>
+            <label for="" name="nome">Nome</label>
+            <input type="text" required name="nome" value="{{nome}}">
+
+            <label for="" name="email">Email</label>
+            <input type="email" required name="email" value="{{email}}">
+
+            <label for="" name="senha1">Senha</label>
+            <input type="password" required name="senha1">
+            <label for="" name="senha2">repita a senha</label>
+            <input type="password" required name="senha2">
+        </div>
+        <div class="modulos">
+            <h2>Permissões</h2>
+            <div class="modulos-itens" style="margin-top: 24px;">
+                <input type="checkbox" name="perm_ap" {{perm_ap}}>
+                <label for="perm_ap">Módulo Ap</label>
+            </div>
+            <div class="modulos-itens" style="margin-top: 24px;">
+                <input type="checkbox" name="perm_produtos" id="" {{perm_produtos}}>
+                <label for="perm_ap">Módulo produtos</label>
+
+            </div>
+            <div class="modulos-itens" style="margin-top: 24px;">
+                <input type="checkbox" name="perm_tipo" id="" {{perm_tipos}}>
+                <label for="perm_ap">Módulo Tipos</label>
+
+            </div>
+            <div class="modulos-itens" style="margin-top: 24px;">
+                <input type="checkbox" name="perm_relatorio" id="" {{perm_relatorios}}>
+                <label for="perm_ap">Módulo Relatórios</label>
+
+            </div>
+            <div class="modulos-itens" style="margin-top: 24px;">
+                <input type="checkbox" name="perm_clientes" id="" {{perm_clientes}}>
+                <label for="perm_ap">Módulo Clientes</label>
+
+            </div>
+            <div class="modulos-itens" style="margin-top: 24px;">
+                <input type="checkbox" name="perm_configuracao" id="" {{perm_configuracao}}>
+                <label for="perm_ap">Módulo Configuração</label>
+
+            </div>
+            <div class="modulos-itens" style="margin-top: 24px;">
+                <input type="checkbox" name="perm_useredit" id="" {{perm_useredit}}>
+                <label for="perm_ap">Módulo Usuário</label>
+            </div>
+        </div>
+    </div>
+    <button class="btn-pay" type="submit" style="margin-top: 34px; padding: 12px;">
+        Salvar
+    </button>
+
+</form>

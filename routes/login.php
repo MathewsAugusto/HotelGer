@@ -20,6 +20,16 @@ $router->post('/login', [
     }
 ]);
 
+$router->post('/login/senha', [
+    'middlewares' => [
+       'login'
+    ],
+    function($request){
+       return new Response(201, Login::postSenha($request));
+    }
+]);
+
+
 $router->get('/logout', [
     'middlewares' => [
        'login'

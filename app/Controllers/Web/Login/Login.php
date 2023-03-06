@@ -86,4 +86,31 @@ class Login
         
     }
 
+    
+    public static function postSenha($request)
+    {
+        $postVars = $request->getPostVars();
+
+        $email = $_SESSION['hotelger']['email'];
+
+        $user = User::getUserByEmail($email)->fetchObject(User::class);
+        
+        if(!password_verify($postVars['atual'], $user->senha)){
+           return $request->getRouter()->redirect('/configuracao?status=401');
+        }
+        
+        if($postVars['nova'] != $postVars['nova2']){
+            return $request->getRouter()->redirect('/configuracao?status=406');
+        }
+
+        if($postVars['atual'] == $postVars['nova2']){
+            return $request->getRouter()->redirect('/configuracao?status=407');
+        }
+
+        $user->senha = $postVars['nova'];
+        $user->updateSenha();
+        $request->getRouter()->redirect('/configuracao?status=200');
+
+    }
+
 }

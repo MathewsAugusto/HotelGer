@@ -36,7 +36,7 @@ class Aps
             ]);
         }
 
-        return Page::getPage($lista);
+        return Page::getPage($lista, $request);
     }
 
 
@@ -64,7 +64,7 @@ class Aps
             'numero' => $numeroap
         ]);
 
-        return Page::getPage($container);
+        return Page::getPage($container, $request);
     }
 
     public static function setHospedar($request, $numeroap, $tipo)
@@ -88,12 +88,12 @@ class Aps
         $apartamentos->numero_ap    = $numeroap;
         $apartamentos->data_reserva = date('Y-m-d H:i:s');
         $apartamentos->data_entrada = date('Y-m-d H:i:s');
-        $apartamentos->data_saida   = $postVars['datesaida'].' '.$postVars['horasaida'].':00';
+        $apartamentos->data_saida   = $postVars['datesaida'] . ' ' . $postVars['horasaida'] . ':00';
         $apartamentos->valor_total  = $tipos_q->valor;
         $apartamentos->status       = 1;
         $apartamentos->usuario_create = $usuario->codigo;
         $apartamentos->quantidade   = $postVars['quantidade'];
-       
+
         $apartamentos->cadastrarHopedagem();
 
         for ($i = 0; count($postVars['nome']) > $i; $i++) {
@@ -150,7 +150,7 @@ class Aps
             'numero' => $numeroap
         ]);
 
-        return Page::getPage($container);
+        return Page::getPage($container, $request);
     }
 
     public static function setReservar($request, $numeroap, $tipo)
@@ -170,19 +170,19 @@ class Aps
 
         $usuario = User::getUserByEmail($_SESSION['hotelger']['email'])->fetchObject(User::class);
 
-        $data_entrada = $postVars['dateentrada'].' '.$postVars['horaentrada'].':00';
+        $data_entrada = $postVars['dateentrada'] . ' ' . $postVars['horaentrada'] . ':00';
 
         $apartamentos = new Apartamentos;
         $apartamentos->numero_ap    = $numeroap;
         $apartamentos->data_reserva = date('Y-m-d H:i:s');
         $apartamentos->data_entrada = $data_entrada;
-        $apartamentos->data_saida   = $postVars['datesaida'].' '.$postVars['horasaida'].':00';
+        $apartamentos->data_saida   = $postVars['datesaida'] . ' ' . $postVars['horasaida'] . ':00';
         $apartamentos->valor_total  = $tipos_q->valor;
         $apartamentos->status       = 0;
         $apartamentos->usuario_create = $usuario->codigo;
         $apartamentos->quantidade   = $postVars['quantidade'];
 
-               
+
         $apartamentos->cadastrarHopedagem();
 
         for ($i = 0; count($postVars['nome']) > $i; $i++) {
@@ -212,7 +212,6 @@ class Aps
 
 
         $request->getRouter()->redirect('/');
-        
     }
 
     /**
@@ -243,7 +242,7 @@ class Aps
             'numeroap' => $numeroap
         ]);
 
-        return Page::getPage($index);
+        return Page::getPage($index, $request);
     }
 
     public static function getAddProdutoConfirma($request, $codiproProd, $numeroap)
@@ -265,7 +264,7 @@ class Aps
         ]);
 
 
-        return Page::getPage($container);
+        return Page::getPage($container, $request);
     }
 
     /**
@@ -350,7 +349,7 @@ class Aps
             'numeroap' => $ap->numero_ap
         ]);
 
-        return Page::getPage($container);
+        return Page::getPage($container, $request);
     }
 
     /**
@@ -368,11 +367,13 @@ class Aps
         if (!$ap instanceof Apartamentos) {
             $request->getRouter()->redirect('/');
         }
-
+        date_default_timezone_set('America/Sao_Paulo');
+        $ap->status = 2;
+        $ap->data_pag = date('Y-m-d H:i:s');
         $ap->tipo_pagamento = $postVars['pagamento'];
         $ap->pagar();
 
-        $request->getRouter()->redirect('/');
+        $request->getRouter()->redirect('/recibo/'.$ap->codigo);
     }
 
     /**
@@ -390,9 +391,9 @@ class Aps
         }
 
         $container = View::render('aps/cancelar/index', [
-        'numeroap' => $ap->numero_ap
+            'numeroap' => $ap->numero_ap
         ]);
-        return Page::getPage($container);
+        return Page::getPage($container, $request);
     }
 
     /**
@@ -413,7 +414,5 @@ class Aps
         $ap->cancelar();
 
         $request->getRouter()->redirect('/');
-        
     }
-
 }

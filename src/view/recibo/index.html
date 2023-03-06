@@ -1,0 +1,64 @@
+<div class="box"style="text-align: left;">
+    <div class="recibo">
+
+        <img style="margin: 8px;" class="logo" src="{{URL}}/src/imgs/logo.jpeg" alt="">
+        <div>
+            <h2>Recibo</h2>
+            <h1 style="right: 0;">R${{valor}}</h1>
+        </div>
+
+    </div>
+    <div style="margin-top: 20px;">
+        <h3 class="text-recibo">Recebemos de  {{cliente}} </h3>
+        <h3 class="text-recibo">___________________________________________________</h3>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <h3  class="text-recibo">a quantia de <u>{{valor-desc}}</u></h3>
+        <h3 class="text-recibo">__________________________________________________</h3>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <h3 class="text-recibo">referente a <u>{{referente}}</u></h3>
+        <h3 class="text-recibo">__________________________________________________</h3>
+    </div>
+</div>
+<div class="recibo-end" style="margin: 8px;">
+    <div class="dados-recibo">
+        <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-layers">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>{{cnpj}}</span>
+        <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-map-pin">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+            </svg>{{endereco}}</span>
+        <span>{{cep}}</span>
+        <span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-smartphone">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+            </svg>{{contato}}</span>
+    </div>
+    <div>
+        <div style="margin: 20px;" class="data">
+            <span>{{cidade}},_<u>{{dia}}</u>_de__<u>{{mes}}</u>___de___<u>{{ano}}</u>___</span>
+        </div>
+        <div class="assinatura">
+            <span>___________________________</span>
+            <span>{{empresa}}</span>
+        </div>
+    </div>
+</div>
+
+<span>-------------------------------------------------------------------------------------------------------------------------------------</span>
+<button class="btn-add-tipo" style="width: 50%;" onclick="window.print()">Imprimir</button>
