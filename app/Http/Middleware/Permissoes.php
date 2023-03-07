@@ -31,7 +31,7 @@ class Permissoes
                 }
                 break;
             case 'tipos':
-                if ($user->perm_tipos == 0) {
+                if ($user->perm_tipo == 0) {
                     $request->getRouter()->redirect('/?status=401');
                 }
                 break;

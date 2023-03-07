@@ -67,15 +67,15 @@ class Reports
                 $somaProdutos += $quantidade * $valor;
                 switch ($ap->tipo_pagamento) {
                     case 0:
-                        $dinheiro++;
+                       // $dinheiro++;
                         $dinheiroValor += $quantidade * $valor;
                         break;
                     case 1:
-                        $pix++;
+                       // $pix++;
                         $pixValor += $quantidade * $valor;
                         break;
                     case 2:
-                        $cartao++;
+                       // $cartao++;
                         $CartaoValor += $quantidade * $valor;
                         break;
                 }
