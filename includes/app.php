@@ -1,14 +1,15 @@
 <?php
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 session_start();
+
 use App\Utils\View;
 use WilliamCosta\DotEnv\Environment;
 use WilliamCosta\DatabaseManager\Database;
 use App\Http\Middleware\Queue as MiddlewareQueue;
 
-Environment::load(__DIR__.'/../');
+Environment::load(__DIR__ . '/../');
 define('URL', getenv('URL'));
-View::int(['URL'=>URL]);
+View::int(['URL' => URL]);
 
 Database::config(
     getenv('DB_HOST'),
@@ -20,9 +21,13 @@ Database::config(
 
 //define o mapeamento de middlewares
 MiddlewareQueue::setMap([
-    'sessao'            =>\App\Http\Middleware\Sessao::class,
-    'login'            =>\App\Http\Middleware\RequireAdminLogin::class,
-    'logout'            =>\App\Http\Middleware\RequireAdminLogout::class,
-    ]); 
-    
+    'sessao'            => \App\Http\Middleware\Sessao::class,
+    'login'             => \App\Http\Middleware\RequireAdminLogin::class,
+    'logout'            => \App\Http\Middleware\RequireAdminLogout::class,
+    'permissoes'        => \App\Http\Middleware\Permissoes::class,
+]);
 
+
+MiddlewareQueue::setDefault([
+    'permissoes'
+]);
