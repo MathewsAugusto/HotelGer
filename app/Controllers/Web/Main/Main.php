@@ -39,9 +39,10 @@ class Main
                 $container .= View::render(
                     'page/container',
                     [
-                        'class' => "apartamento-ativo",
-                        'numb' => $i,
-                        'numero' => $i
+                        'class'  => "apartamento-ativo",
+                        'numb'   => $i,
+                        'numero' => $i,
+                        'sts'    => 'Hospedado'
                     ]
                 );
             } else if (in_array($i, $boxsre)) {
@@ -50,7 +51,8 @@ class Main
                     [
                         'class' => "apartamento-reserv",
                         'numb' => $i,
-                        'numero' => $i
+                        'numero' => $i,
+                        'sts'    => 'Reservado'
                     ]
                 );
             } else {
@@ -60,7 +62,8 @@ class Main
                     [
                         'class' => "apartamento",
                         'numb' => $i,
-                        'numero' => $i
+                        'numero' => $i,
+                        'sts'    => 'Livre'
                     ]
                 );
             }
