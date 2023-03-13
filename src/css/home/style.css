@@ -404,8 +404,9 @@ th {
 }
 
 .alert {
-  width: 40%;
+  width: 100%;
   max-height: 60px;
+  margin-right: 20px;
   justify-content: space-between;
   text-align: justify;
   display: flex;
