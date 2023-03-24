@@ -4,10 +4,19 @@
  --cor-yellow: linear-gradient(55deg,#f4f4eceb, #f4442c);
  --cor-red: linear-gradient(55deg,#f725228e, #f7341a);
 
-}  */
-:root {
+
+ :root {
   --cor-padrao: linear-gradient(45deg, #2a50c2, #3f48cc);
   --cor-secundaria: linear-gradient(55deg, #3f48cc, #f7341a);
+  --cor-yellow: linear-gradient(55deg, #f7f707eb, #f7341a);
+  --cor-red: linear-gradient(55deg, #f7341a, #3f48cc);
+  --cor-sucess: linear-gradient(90deg, #1c9747, #0cef7e);
+}
+
+}  */
+:root {
+  --cor-padrao: linear-gradient(45deg, #090075, #3f48cc);
+  --cor-secundaria: linear-gradient(55deg, #f7341a, #3f48cc);
   --cor-yellow: linear-gradient(55deg, #f7f707eb, #f7341a);
   --cor-red: linear-gradient(55deg, #f7341a, #3f48cc);
   --cor-sucess: linear-gradient(90deg, #1c9747, #0cef7e);
