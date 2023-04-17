@@ -101,7 +101,8 @@ class Apartamentos
             "codigo = $this->codigo",
             [
                 'quantidade' => $this->quantidade,
-                "data_saida" => $this->data_saida
+                "data_saida" => $this->data_saida,
+                "numero_ap"  => $this->numero_ap
 
             ]
         );

@@ -64,6 +64,9 @@ class Page
             case '407':
                 $view = Alert::getError("Insira uma senha diferente");
                 break;
+            case '500':
+                $view = Alert::getError("Ap está ocupado, escolha outro Ap");
+                break;
         }
         return $view;
     }

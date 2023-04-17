@@ -37,9 +37,9 @@ class Aps
             ]);
         }
 
-        $container = View::render('aps/header-item',[
-            'itens'=>$lista,
-            'numeroap'=>$numeroap
+        $container = View::render('aps/header-item', [
+            'itens' => $lista,
+            'numeroap' => $numeroap
         ]);
 
 
@@ -442,6 +442,7 @@ class Aps
     {
         $ap = Apartamentos::getApsByRervado($codigo)->fetchObject(Apartamentos::class);
 
+       
         if (!$ap instanceof Apartamentos) {
             $request->getRouter()->redirect('/');
         }
@@ -457,28 +458,36 @@ class Aps
         $ap = Apartamentos::getApEditeOcupado($codigo)->fetchObject(Apartamentos::class);
 
         $container = View::render("aps/edite_ap", [
-            "numeroap"=>$ap->numero_ap,
-            "reserva" =>date("d/m/Y H:i", strtotime($ap->data_reserva)) ."hrs",
-            "entrada" =>date("d/m/Y H:i", strtotime($ap->data_entrada)) ."hrs",
-            "saida"   =>date("d/m/Y H:i", strtotime($ap->data_saida)) ."hrs"   
+            "numeroap"  => $ap->numero_ap,
+            "reserva"   => date("d/m/Y H:i", strtotime($ap->data_reserva)) . "hrs",
+            "entrada"   => date("d/m/Y H:i", strtotime($ap->data_entrada)) . "hrs",
+            "saida"     => date("d/m/Y H:i", strtotime($ap->data_saida)) . "hrs",
+            "numero-ap" => $ap->numero_ap . "hrs"
         ]);
 
         return Page::getPage($container, $request);
-
     }
 
     public static function setHoraSaida($request, $codigo)
     {
         $ap = Apartamentos::getApEditeOcupado($codigo)->fetchObject(Apartamentos::class);
 
-        if(!$ap instanceof Apartamentos){
-        $request->getRouter()->redirect('/');
+        if (!$ap instanceof Apartamentos) {
+            $request->getRouter()->redirect('/');
         }
 
         $postVars = $request->getPostVars();
+        $numeroap = $postVars['numero-ap'];
 
-        $ap->data_saida = $postVars['saida-data'] .' '.$postVars['saida-hora'].':00';
+        if ($ap->numero_ap != $numeroap) {
+            $newAp = Apartamentos::getApsByAtivos($numeroap)->fetchObject(Apartamentos::class);
 
+            if ($newAp instanceof Apartamentos) {
+                $request->getRouter()->redirect("/hora-saida/$ap->codigo?status=500");
+            }
+            $ap->numero_ap  = $numeroap;
+        }
+        $ap->data_saida = $postVars['saida-data'] . ' ' . $postVars['saida-hora'] . ':00';
 
         $date1 = new DateTime($ap->data_entrada);
         $date2 = new DateTime($ap->data_saida);
@@ -488,7 +497,7 @@ class Aps
         $ap->quantidade = $diferenca->days;
 
         $ap->atualizaDataSaida();
-        
+
         $request->getRouter()->redirect("/ap/$ap->numero_ap");
     }
 }

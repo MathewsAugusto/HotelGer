@@ -116,22 +116,22 @@ $router->post('/pagar/{numeroap}', [
 
 ]);
 
-$router->get('/cancelar/{numeroap}', [
+$router->get('/cancelar/{codigo}', [
     'middlewares' => [
         'sessao'
     ],
-    function($request, $numeroap){
-        return new Response(200, Aps::getCancelar($request, $numeroap));
+    function($request, $codigo){
+        return new Response(200, Aps::getCancelar($request, $codigo));
     }
 
 ]);
 
-$router->post('/cancelar/{numeroap}', [
+$router->post('/cancelar/{codigo}', [
     'middlewares' => [
         'sessao'
     ],
-    function($request, $numeroap){
-        return new Response(201, Aps::postCancelar($request, $numeroap));
+    function($request, $codigo){
+        return new Response(201, Aps::postCancelar($request, $codigo));
     }
 
 ]);
