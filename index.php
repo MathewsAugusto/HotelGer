@@ -16,6 +16,7 @@ include __DIR__.'/routes/recibo.php';
 include __DIR__.'/routes/configuracao.php';
 include __DIR__.'/routes/usuario.php';
 include __DIR__.'/routes/clientes.php';
+include __DIR__.'/routes/reservas.php';
 
 
 $router->run()->sendResponse();

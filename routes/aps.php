@@ -121,7 +121,7 @@ $router->get('/cancelar/{numeroap}', [
         'sessao'
     ],
     function($request, $numeroap){
-        return new Response(201, Aps::getCancelar($request, $numeroap));
+        return new Response(200, Aps::getCancelar($request, $numeroap));
     }
 
 ]);
@@ -135,6 +135,38 @@ $router->post('/cancelar/{numeroap}', [
     }
 
 ]);
+
+
+$router->get('/hospedar-agora/{codigo}', [
+    'middlewares' => [
+        'sessao'
+    ],
+    function($request, $codigo){
+        return new Response(200, Aps::getHospedarAgora($request, $codigo));
+    }
+
+]);
+
+$router->get('/hora-saida/{codigo}', [
+    'middlewares' => [
+        'sessao'
+    ],
+    function($request, $codigo){
+        return new Response(200, Aps::getHoraSaida($request, $codigo));
+    }
+
+]);
+
+$router->post('/hora-saida/{codigo}', [
+    'middlewares' => [
+        'sessao'
+    ],
+    function($request, $codigo){
+        return new Response(201, Aps::setHoraSaida($request, $codigo));
+    }
+
+]);
+
 
 
 

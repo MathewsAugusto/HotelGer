@@ -1,17 +1,20 @@
 <div class="container">
     <form action="" method="post">
-        <h3 style="margin-bottom:16px ;">Ap/Quarto: {{numero}}</h3>
-        <h3>Data entrada: {{data}}</h3>
-        <div class="box-form" style="margin: 24px;">
-            <h2>Data Saída: </h2><input type="date" name="datesaida" autofocus required>
+        <div class="box" style="margin: 24px;" >
+            <div>
+                <h3 style="margin-bottom:16px ;" >Ap/Quarto: {{numero}}</h3>
+                <h3>Data entrada: {{data}}</h3>
+            </div>
+            <div class="">
+                <h2>Data Saída: </h2><input type="date" name="datesaida" autofocus required>
+                <h2>Hora Saída: </h2><input type="time" name="horasaida" autofocus required>
+            </div>
 
-            <h2>Hora Saída: </h2><input type="time" name="horasaida" autofocus required>
         </div>
-
-        <input style="margin-top: 34px;" type="number" step="0.1" min="0" name="quantidade" placeholder="Diárias">
+        <hr>
         {{item}}
 
-        <button type="submit" class="btn-hosp">Hospedar 🛏</button>
+        <button type="submit" class="btn-hosp"><strong>Hospedar 🛏</strong> </button>
 
     </form>
 </div>

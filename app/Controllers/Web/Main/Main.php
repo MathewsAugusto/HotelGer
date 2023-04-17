@@ -8,6 +8,7 @@ use App\Models\Cliente;
 use App\Models\Cliente_hospedado;
 use App\Models\Produtos_aps;
 use App\Utils\View;
+use DateTime;
 
 class Main
 {
@@ -86,8 +87,12 @@ class Main
 
         if (!$ap instanceof Apartamentos) {
 
+            
+
             $desativado = View::render('aps/desativado', [
-                'numero' => $codigo
+                'codigo' => $codigo,
+                'ap'     => $codigo,
+              
             ]);
 
             $content = View::render('aps/index', [
@@ -131,6 +136,12 @@ class Main
 
 
             $totalAll = $totalProduto + ($ap->valor_total * $ap->quantidade);
+            $date1 = new DateTime($ap->data_entrada);
+            $date2 = new DateTime($ap->data_saida);
+
+            $diferenca = $date1->diff($date2);
+
+            $totalAll = $totalAll + (($ap->valor_total / 24) * $diferenca->h);
 
 
             $ativado = View::render('aps/ativo', [
@@ -139,13 +150,14 @@ class Main
                 'data_e' => date('H:i d/m/Y', strtotime($ap->data_entrada)),
                 'data_s' => date('H:i d/m/Y', strtotime($ap->data_saida)),
                 'valor'  => number_format($totalAll, 2, ",", "."),
-                'diaria' => $ap->quantidade,
+                'diaria' => $diferenca->h == 0 ? $ap->quantidade . " Diária's" : $ap->quantidade . ' Diárias e ' . $diferenca->h . 'Horas',
                 'clientes' => $contentClientes,
-                'tablepro' => $table,
-                'codigo'  => $codigo,
+                'tablepro' => $ap->status == 0 ? "" :$table,
+                'codigo'  => $ap->codigo,
                 'numeroap' => $ap->numero_ap,
-                'button'   => $ap->status == 0 ? View::render('aps/button',['numeroap'=>$ap->numero_ap]) : ''
-                
+                'button-hospedar'   => $ap->status == 0 ? View::render('aps/button', ['numeroap' => $ap->numero_ap]) : '',
+                'button-pagar' => $ap->status == 0 ? "" : View::render('aps/button_pagar', ['numeroap' => $ap->numero_ap]),
+                'consumo_prods'=> $ap->status == 0 ? "" : View::render('aps/consumo_prods', ['codigo' => $ap->numero_ap])
 
             ]);
 
@@ -153,8 +165,6 @@ class Main
         }
 
         return Page::getPage($content, $request);
-           
-    
     }
 
     /**
@@ -172,18 +182,27 @@ class Main
             $request->getRouter()->redirect("/");
         }
 
+        $date1 = new DateTime($ap->data_entrada);
+        $date2 = new DateTime($ap->data_saida);
+
         switch ($type) {
             case 'mais':
-                $ap->quantidade++;
+                $date2->modify("+12 hours");
+                $diferenca = $date1->diff($date2);
+
+                $ap->data_saida = $date2->format("Y-m-d H:i:s");
+                $ap->quantidade = $diferenca->days;
                 break;
             case 'menos':
-                if($ap->quantidade > 0)
-                $ap->quantidade--;
+                $date2->modify("-12 hours");
+                $diferenca = $date1->diff($date2);
+
+                $ap->data_saida = $date2->format("Y-m-d H:i:s");
+                $ap->quantidade = $diferenca->days;
                 break;
         }
         $ap->updateQuantidade();
 
         $request->getRouter()->redirect("/ap/$numeroap");
-        
     }
 }

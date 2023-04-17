@@ -30,10 +30,23 @@ class Apartamentos
      *
      * @param int $numeroAp
      */
-    public static function getApsByAtivos($numeroAp)
+    public static function getApsByAtivos($numeroap)
     {
-        return self::getAps("numero_ap = '$numeroAp' AND status < 2");
+        return self::getAps("numero_ap = '$numeroap' AND status = 1");
     }
+
+    public static function getApsByAtivosCodigo($codigo)
+    {
+        return self::getAps("codigo = '$codigo' AND status <= 1");
+    }
+    
+
+
+    public static function getReservas()
+    {
+        return self::getAps("status = 0");
+    }
+
 
     public static function getRecibo($numeroAp)
     {
@@ -74,7 +87,22 @@ class Apartamentos
         return (new Database('apartamentos'))->update(
             "codigo = $this->codigo",
             [
-                'quantidade' => $this->quantidade
+                'quantidade' => $this->quantidade,
+                "data_saida" => $this->data_saida
+
+            ]
+        );
+    }
+
+    
+    public function atualizaDataSaida()
+    {
+        return (new Database('apartamentos'))->update(
+            "codigo = $this->codigo",
+            [
+                'quantidade' => $this->quantidade,
+                "data_saida" => $this->data_saida
+
             ]
         );
     }
@@ -100,4 +128,36 @@ class Apartamentos
             ]
         );
     }
+
+    public static function getApsByRervado($codigo)
+    {
+        return self::getAps("status = 0 AND codigo = $codigo");
+    }
+
+    public static function getApsByRervados($ap)
+    {
+        return self::getAps("status = 0 AND numero_ap = '$ap'");
+    }
+
+    public function setAtiveReservaToHospeda()
+    {
+        return (new Database('apartamentos'))->update("numero_ap = $this->numero_ap AND codigo = $this->codigo",[
+              "status"=> $this->status 
+        ]);
+    }
+
+    public function excluir()
+    {
+        return (new Database('apartamentos'))->update(
+            "codigo = $this->codigo",[
+            'status'=>3]
+           
+        );
+    }
+
+    public static function getApEditeOcupado($codigo)
+    {
+        return self::getAps("codigo = $codigo");
+    }
+
 }

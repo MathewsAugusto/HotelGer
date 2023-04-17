@@ -1,5 +1,5 @@
 <div class="box-form" style="margin-top: 24px;">
-    <input style="margin-right: 16px;"  placeholder="Nome hóspede 1" type="text" name="nome[]" id="">
-    <input style="margin-right: 16px;width: 200px;" placeholder="CPF" type="text" name="cpf[]" id="" onkeypress="return(formatarCpf(event))">
-    <input style="width: 200px;" placeholder="(93) 99399-9999" type="text" name="celular[]" onkeypress="return(celular(event))">
+    <input style="margin-right: 16px;"  placeholder="Nome hóspede 1" type="text" name="nome[]" id="" {{required}}>
+    <input style="margin-right: 16px;width: 200px;" placeholder="CPF" type="text" name="cpf[]" id="" onkeypress="return(formatarCpf(event))" {{required}}>
+    <input style="width: 200px;" placeholder="(93) 99399-9999" type="text" name="celular[]" onkeypress="return(celular(event))" {{required}}>
 </div>

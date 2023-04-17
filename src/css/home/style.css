@@ -40,7 +40,7 @@ body {
 footer {
   display: flex;
   justify-content: center;
-  width: 100vw;
+  width: 100%;
   background: var(--cor-padrao);
   margin-top: 48px;
   justify-self: center;
@@ -232,7 +232,7 @@ ul li:hover a {
 .btn-hosp:hover {
   border-radius: 22px;
   color: #ffffff;
-  background: var(--cor-padrao);
+  background: var(--cor-sucess);
   cursor: pointer;
 }
 
@@ -272,6 +272,7 @@ input:hover {
 }
 
 .card {
+  background: var(--cor-sucess);
   border-radius: 22px;
   border-style: 1.4px solid;
   box-shadow: 0 3px 6px 0 #574c4c;
@@ -281,6 +282,26 @@ input:hover {
   transition: 200ms ease-in-out;
 }
 .card:hover {
+  border-radius: 22px;
+  border-style: 1.4px solid;
+  box-shadow: 0 3px 6px 0 #574c4c;
+  padding: 12px;
+  margin: 8px;
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+.card-danger {
+  background: var(--cor-red);
+  border-radius: 22px;
+  border-style: 1.4px solid;
+  box-shadow: 0 3px 6px 0 #574c4c;
+  padding: 12px;
+  margin: 8px;
+  text-decoration: none;
+  transition: 200ms ease-in-out;
+}
+.card-danger:hover {
   border-radius: 22px;
   border-style: 1.4px solid;
   box-shadow: 0 3px 6px 0 #574c4c;
@@ -380,7 +401,7 @@ th {
 }
 
 .marg-top-75px {
-  margin-top: 75px;
+  margin-top: 85px;
 }
 .dados-recibo {
   display: grid;

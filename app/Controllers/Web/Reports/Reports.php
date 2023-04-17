@@ -8,6 +8,7 @@ use App\Models\Produtos;
 use App\Models\Produtos_aps;
 use App\Models\Reports as ModelsReports;
 use App\Utils\View;
+use DateTime;
 use JetBrains\PhpStorm\Deprecated;
 
 class Reports
@@ -49,8 +50,6 @@ class Reports
 
         $query = ModelsReports::getReportSimple($dataI, $dataF);
 
-
-        $controle = 0;
         $somaProdutos = 0;
         $somaQuartos = 0;
         $dinheiroValor = 0;
@@ -59,47 +58,50 @@ class Reports
         $pix = 0;
         $dinheiro = 0;
         $cartao = 0;
+
         while ($ap = $query->fetchObject(ModelsReports::class)) {
 
-            if ($controle == $ap->codigo_ap) {
-                $quantidade    = $ap->quantidade;
-                $valor         = $ap->valor;
-                $somaProdutos += $quantidade * $valor;
+            $produtos = Produtos_aps::getProdutosbyAps($ap->codigo);
+
+            while ($prod = $produtos->fetchObject(Produtos_aps::class)) {
+
+                $somaProdutos += $prod->quantidade * $prod->valor;
                 switch ($ap->tipo_pagamento) {
+
                     case 0:
-                       // $dinheiro++;
-                        $dinheiroValor += $quantidade * $valor;
+                        $dinheiroValor += $prod->quantidade * $prod->valor;
                         break;
                     case 1:
-                       // $pix++;
-                        $pixValor += $quantidade * $valor;
+                        $pixValor += $prod->quantidade * $prod->valor;
                         break;
                     case 2:
-                       // $cartao++;
-                        $CartaoValor += $quantidade * $valor;
+                        $CartaoValor += $prod->quantidade * $prod->valor;
                         break;
                 }
-            } else {
-                $quantidade    = $ap->quantidade;
-                $valor         = $ap->valor;
-                $somaProdutos += $quantidade * $valor;
-                switch ($ap->tipo_pagamento) {
-                    case 0:
-                        $dinheiro++;
-                        $dinheiroValor += ($quantidade * $valor) + ($ap->valor_total * $ap->quanti_ap);
-                        break;
-                    case 1:
-                        $pix++;
-                        $pixValor += ($quantidade * $valor) + ($ap->valor_total * $ap->quanti_ap);
-                        break;
-                    case 2:
-                        $cartao++;
-                        $CartaoValor += ($quantidade * $valor) + ($ap->valor_total * $ap->quanti_ap);
-                        break;
-                }
-                $somaQuartos += $ap->valor_total * $ap->quanti_ap;
             }
-            $controle = $ap->codigo_ap;
+
+            $date1 = new DateTime($ap->data_entrada);
+            $date2 = new DateTime($ap->data_saida);
+            $difereca = $date1->diff($date2);
+
+            $diarias = $difereca->days;
+            $horas   = $difereca->h;
+            $valorHoras = $ap->valor_total / 24;
+
+            switch ($ap->tipo_pagamento) {
+                case 0:
+                    $dinheiro++;
+                    $dinheiroValor += $diarias * $ap->valor_total + ($valorHoras * $horas);
+                    break;
+                case 1:
+                    $pix++;
+                    $pixValor += $diarias * $ap->valor_total + ($valorHoras * $horas);
+                    break;
+                case 2:
+                    $cartao++;
+                    $CartaoValor += $diarias * $ap->valor_total + ($valorHoras * $horas);
+                    break;
+            }
         }
 
         $itens = View::render(
@@ -152,15 +154,23 @@ class Reports
                 ]);
             }
 
+            $date1 = new DateTime($ap->data_entrada);
+            $date2 = new DateTime($ap->data_saida);
+            $difereca = $date1->diff($date2);
+
+            $diarias = $difereca->days;
+            $horas   = $difereca->h;
+            $valorHoras = $ap->valor_total / 24;
+
             switch ($ap->tipo_pagamento) {
                 case 0:
-                    $valoDinheiro += $ap->valor_total * $ap->quantidade;
+                    $valoDinheiro += ($ap->valor_total * $diarias) + ($horas * $valorHoras);
                     break;
                 case 1:
-                    $valorPix += $ap->valor_total * $ap->quantidade;
+                    $valorPix += ($ap->valor_total * $diarias) + ($horas * $valorHoras);
                     break;
                 case 2:
-                    $valorCartao += $ap->valor_total * $ap->quantidade;
+                    $valorCartao += ($ap->valor_total * $diarias) + ($horas * $valorHoras);
                     break;
             }
 
@@ -188,7 +198,8 @@ class Reports
                         break;
                 }
             }
-            
+
+
 
             $viewAps .= View::render('reports/detalhado/ap', [
                 'numeroap' => $ap->numero_ap,
@@ -197,9 +208,9 @@ class Reports
                 'saida'    => $ap->data_saida,
                 'hospedes' => $viewHospedes,
                 'codigo'   => $ap->codigo,
-                'diarias'  => $ap->quantidade,
-                'valord'   => number_format($ap->valor_total, 2, ',', '.'),
-                'total'    => number_format($somaProdutos + ($ap->valor_total * $ap->quantidade), 2, ',', '.'),
+                'diarias'  => $horas == 0 ? $ap->quantidade." Diária's" : $ap->quantidade." Diária's e ".$horas."hr's",
+                'valord'   => number_format(($ap->valor_total * $diarias) + ($horas * $valorHoras), 2, ',', '.'),
+                'total'    => number_format($somaProdutos + (($ap->valor_total * $diarias) + ($horas * $valorHoras)), 2, ',', '.'),
                 'produtos' => View::render('reports/detalhado/table', [
                     'list' => $viewProdutos
                 ])
@@ -232,21 +243,20 @@ class Reports
         while ($prod = $produtos->fetchObject(ModelsReports::class)) {
 
             $viewProd .= View::render('reports/produtos/item', [
-                'Produto'   =>$prod->nome,
-                'quantidade'=>$prod->quantidade,
-                'valor'     =>number_format($prod->valor, 2, ',', '.'),
-                'total'     =>number_format($prod->total, 2, ',', '.')  
+                'Produto'   => $prod->nome,
+                'quantidade' => $prod->quantidade,
+                'valor'     => number_format($prod->valor, 2, ',', '.'),
+                'total'     => number_format($prod->total, 2, ',', '.')
             ]);
 
             $all += $prod->total;
-
         }
 
         $container = View::render('reports/produtos/index', [
-            'itens'=>$viewProd,
-            'totalall'=>number_format($all, 2, ',', '.'),
-            'dataI'=>date('d/m/Y', strtotime($dataI)),
-            'dataF'=>date('d/m/Y', strtotime($dataF))
+            'itens' => $viewProd,
+            'totalall' => number_format($all, 2, ',', '.'),
+            'dataI' => date('d/m/Y', strtotime($dataI)),
+            'dataF' => date('d/m/Y', strtotime($dataF))
         ]);
 
         return Page::getPage($container, $request);

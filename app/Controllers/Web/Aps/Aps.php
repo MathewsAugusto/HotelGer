@@ -11,6 +11,7 @@ use App\Models\Produtos_aps;
 use App\Models\Tipo_quartos;
 use App\Models\User;
 use App\Utils\View;
+use DateTime;
 
 class Aps
 {
@@ -36,7 +37,13 @@ class Aps
             ]);
         }
 
-        return Page::getPage($lista, $request);
+        $container = View::render('aps/header-item',[
+            'itens'=>$lista,
+            'numeroap'=>$numeroap
+        ]);
+
+
+        return Page::getPage($container, $request);
     }
 
 
@@ -44,6 +51,7 @@ class Aps
     {
         $tipo = Tipo_quartos::getByCodigo($tipo)->fetchObject(Tipo_quartos::class);
         $quartoap = Apartamentos::getApsByAtivos($numeroap)->fetchObject(Apartamentos::class);
+
 
         if ($quartoap instanceof Apartamentos) {
             $request->getRouter()->redirect("/");
@@ -55,7 +63,11 @@ class Aps
         }
         $item = '';
         for ($i = 0; $i < $tipo->max; $i++) {
-            $item .= View::render('aps/item_form', []);
+            if ($i == 0) {
+                $item .= View::render('aps/item_form', ['required' => "required"]);
+            } else {
+                $item .= View::render('aps/item_form', ['required' => ""]);
+            }
         }
         date_default_timezone_set('America/Sao_Paulo');
         $container = View::render('aps/form', [
@@ -77,10 +89,7 @@ class Aps
             $request->getRouter()->redirect('/');
         }
 
-        if ($postVars['quantidade'] <= 0) {
 
-            $request->getRouter()->redirect("/$numeroap/hospedar/$tipo");
-        }
 
         $usuario = User::getUserByEmail($_SESSION['hotelger']['email'])->fetchObject(User::class);
 
@@ -92,7 +101,15 @@ class Aps
         $apartamentos->valor_total  = $tipos_q->valor;
         $apartamentos->status       = 1;
         $apartamentos->usuario_create = $usuario->codigo;
-        $apartamentos->quantidade   = $postVars['quantidade'];
+
+
+        $date1 = new DateTime($apartamentos->data_entrada);
+        $date2 = new DateTime($apartamentos->data_saida);
+        $diferencas  = $date1->diff($date2);
+        $diarias = $diferencas->days;
+
+        $apartamentos->quantidade   = $diarias;
+
 
         $apartamentos->cadastrarHopedagem();
 
@@ -130,10 +147,10 @@ class Aps
         $tipo = Tipo_quartos::getByCodigo($tipo)->fetchObject(Tipo_quartos::class);
         $quartoap = Apartamentos::getApsByAtivos($numeroap)->fetchObject(Apartamentos::class);
 
-        if ($quartoap instanceof Apartamentos) {
+        /*  if ($quartoap instanceof Apartamentos) {
             $request->getRouter()->redirect("/");
         }
-
+ */
 
         if (!$tipo instanceof Tipo_quartos) {
             $request->getRouter()->redirect('/');
@@ -163,25 +180,29 @@ class Aps
             $request->getRouter()->redirect('/');
         }
 
-        if ($postVars['quantidade'] <= 0) {
 
-            $request->getRouter()->redirect("/$numeroap/hospedar/$tipo");
-        }
 
         $usuario = User::getUserByEmail($_SESSION['hotelger']['email'])->fetchObject(User::class);
 
         $data_entrada = $postVars['dateentrada'] . ' ' . $postVars['horaentrada'] . ':00';
-
+        $data_saida   = $postVars['datesaida'] . ' ' . $postVars['horasaida'] . ':00';
         $apartamentos = new Apartamentos;
         $apartamentos->numero_ap    = $numeroap;
         $apartamentos->data_reserva = date('Y-m-d H:i:s');
         $apartamentos->data_entrada = $data_entrada;
-        $apartamentos->data_saida   = $postVars['datesaida'] . ' ' . $postVars['horasaida'] . ':00';
+        $apartamentos->data_saida   = $data_saida;
         $apartamentos->valor_total  = $tipos_q->valor;
         $apartamentos->status       = 0;
         $apartamentos->usuario_create = $usuario->codigo;
-        $apartamentos->quantidade   = $postVars['quantidade'];
 
+
+
+        $date1 = new DateTime($apartamentos->data_entrada);
+        $date2 = new DateTime($apartamentos->data_saida);
+        $diferencas  = $date1->diff($date2);
+        $diarias = $diferencas->days;
+
+        $apartamentos->quantidade   = $diarias;
 
         $apartamentos->cadastrarHopedagem();
 
@@ -373,7 +394,7 @@ class Aps
         $ap->tipo_pagamento = $postVars['pagamento'];
         $ap->pagar();
 
-        $request->getRouter()->redirect('/recibo/'.$ap->codigo);
+        $request->getRouter()->redirect('/recibo/' . $ap->codigo);
     }
 
     /**
@@ -382,9 +403,9 @@ class Aps
      * @param Request $request
      * @param int $numeroap
      */
-    public static function getCancelar($request, $numeroap)
+    public static function getCancelar($request, $codigo)
     {
-        $ap = Apartamentos::getApsByAtivos($numeroap)->fetchObject(Apartamentos::class);
+        $ap = Apartamentos::getApsByAtivosCodigo($codigo)->fetchObject(Apartamentos::class);
 
         if (!$ap instanceof Apartamentos) {
             $request->getRouter()->redirect('/');
@@ -402,9 +423,9 @@ class Aps
      * @param Request $request
      * @param int $numeroap
      */
-    public static function postCancelar($request, $numeroap)
+    public static function postCancelar($request, $codigo)
     {
-        $ap = Apartamentos::getApsByAtivos($numeroap)->fetchObject(Apartamentos::class);
+        $ap = Apartamentos::getApsByAtivosCodigo($codigo)->fetchObject(Apartamentos::class);
 
         if (!$ap instanceof Apartamentos) {
             $request->getRouter()->redirect('/');
@@ -414,5 +435,60 @@ class Aps
         $ap->cancelar();
 
         $request->getRouter()->redirect('/');
+    }
+
+
+    public static function getHospedarAgora($request, $codigo)
+    {
+        $ap = Apartamentos::getApsByRervado($codigo)->fetchObject(Apartamentos::class);
+
+        if (!$ap instanceof Apartamentos) {
+            $request->getRouter()->redirect('/');
+        }
+
+        $ap->status = 1;
+        $ap->setAtiveReservaToHospeda();
+
+        $request->getRouter()->redirect('/');
+    }
+
+    public static function getHoraSaida($request, $codigo)
+    {
+        $ap = Apartamentos::getApEditeOcupado($codigo)->fetchObject(Apartamentos::class);
+
+        $container = View::render("aps/edite_ap", [
+            "numeroap"=>$ap->numero_ap,
+            "reserva" =>date("d/m/Y H:i", strtotime($ap->data_reserva)) ."hrs",
+            "entrada" =>date("d/m/Y H:i", strtotime($ap->data_entrada)) ."hrs",
+            "saida"   =>date("d/m/Y H:i", strtotime($ap->data_saida)) ."hrs"   
+        ]);
+
+        return Page::getPage($container, $request);
+
+    }
+
+    public static function setHoraSaida($request, $codigo)
+    {
+        $ap = Apartamentos::getApEditeOcupado($codigo)->fetchObject(Apartamentos::class);
+
+        if(!$ap instanceof Apartamentos){
+        $request->getRouter()->redirect('/');
+        }
+
+        $postVars = $request->getPostVars();
+
+        $ap->data_saida = $postVars['saida-data'] .' '.$postVars['saida-hora'].':00';
+
+
+        $date1 = new DateTime($ap->data_entrada);
+        $date2 = new DateTime($ap->data_saida);
+
+        $diferenca = $date1->diff($date2);
+
+        $ap->quantidade = $diferenca->days;
+
+        $ap->atualizaDataSaida();
+        
+        $request->getRouter()->redirect("/ap/$ap->numero_ap");
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Cliente_hospedado;
 use App\Models\Empresa;
 use App\Models\Produtos_aps;
 use App\Utils\View;
+use DateTime;
 
 class Recibo
 {
@@ -24,6 +25,14 @@ class Recibo
            $request->getRouter()->redirect('/');     
         }
 
+        $date1 = new DateTime($ap->data_entrada);
+        $date2 = new DateTime($ap->data_saida);
+        $difereca = $date1->diff($date2);
+
+        $diarias = $difereca->days;
+        $horas   = $difereca->h;
+        $valorHoras = $ap->valor_total / 24;
+
         $prods = Produtos_aps::getProdutosbyAps($ap->codigo);
         $cliente = Cliente_hospedado::getClienteHospedado($ap->codigo)->fetchObject(Cliente_hospedado::class);
        
@@ -35,7 +44,7 @@ class Recibo
         }
 
         $container = View::render('recibo/index', [
-            'valor' => number_format(($ap->valor_total * $ap->quantidade) + $somaProdutos, 2, ',', '.'),
+            'valor' => number_format(($ap->valor_total * $diarias) + ($horas * $valorHoras) + $somaProdutos, 2, ',', '.'),
             'cidade' => $empresa->cidade,
             'empresa' => $empresa->descricao,
             'cnpj' => $empresa->cnpj,
@@ -43,11 +52,11 @@ class Recibo
             'contato' => $empresa->contato,
             'cep' => 'CEP ' . $empresa->cep,
             'cliente' => $cliente->nome,
-            'referente'=>$ap->quantidade . " de diária's de hospedagem",
+            'referente'=> $horas == 0 ? $ap->quantidade . " de diária's de hospedagem" : $ap->quantidade . " diária's e $horas hr's de hospedagem",
             'dia' => date('d'),
             'mes' => self::Mes(date('m')),
             'ano' => date('Y'),
-            'valor-desc' =>self::valorPorExtenso(($ap->valor_total * $ap->quantidade) + $somaProdutos, false, false)
+            'valor-desc' =>self::valorPorExtenso(($ap->valor_total * $diarias) + ($horas * $valorHoras) + $somaProdutos, false, false)
         ]);
 
         return Page::getPage($container, $request);
