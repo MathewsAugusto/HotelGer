@@ -96,22 +96,22 @@ $router->get('/{numeroap}/{codprod}/excluir', [
 
 ]);
 
-$router->get('/pagar/{numeroap}', [
+$router->get('/pagar/{codigo}', [
     'middlewares' => [
         'sessao'
     ],
-    function($request, $numeroap){
-        return new Response(200, Aps::getPagar($request, $numeroap));
+    function($request, $codigo){
+        return new Response(200, Aps::getPagar($request, $codigo));
     }
 
 ]);
 
-$router->post('/pagar/{numeroap}', [
+$router->post('/pagar/{codigo}', [
     'middlewares' => [
         'sessao'
     ],
-    function($request, $numeroap){
-        return new Response(201, Aps::postPagar($request, $numeroap));
+    function($request, $codigo){
+        return new Response(201, Aps::postPagar($request, $codigo));
     }
 
 ]);
@@ -167,6 +167,46 @@ $router->post('/hora-saida/{codigo}', [
 
 ]);
 
+
+$router->get('/hora-entrada/{codigo}', [
+    'middlewares' => [
+        'sessao'
+    ],
+    function($request, $codigo){
+        return new Response(200, Aps::getHoraEntrada($request, $codigo));
+    }
+
+]);
+
+$router->post('/hora-entrada/{codigo}', [
+    'middlewares' => [
+        'sessao'
+    ],
+    function($request, $codigo){
+        return new Response(201, Aps::setHoraEntrada($request, $codigo));
+    }
+
+]);
+
+$router->get('/finalizar/{codigo}', [
+    'middlewares' => [
+        'sessao'
+    ],
+    function($request, $codigo){
+        return new Response(200, Aps::getFinalizarAp($request, $codigo));
+    }
+
+]);
+
+$router->post('/finalizar/{codigo}', [
+    'middlewares' => [
+        'sessao'
+    ],
+    function($request, $codigo){
+        return new Response(200, Aps::setFinalizarAp($request, $codigo));
+    }
+
+]);
 
 
 

@@ -48,6 +48,8 @@ class Reports
         $dataI = $queryParams['dataini'];
         $dataF = $queryParams['datafin'];
 
+       
+
         $query = ModelsReports::getReportSimple($dataI, $dataF);
 
         $somaProdutos = 0;
@@ -139,7 +141,6 @@ class Reports
         $valoDinheiro = 0;
         $valorPix = 0;
         $valorCartao = 0;
-
 
 
         while ($ap = $query->fetchObject(ModelsReports::class)) {

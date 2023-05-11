@@ -150,7 +150,7 @@ class Aps
         /*  if ($quartoap instanceof Apartamentos) {
             $request->getRouter()->redirect("/");
         }
- */
+        */
 
         if (!$tipo instanceof Tipo_quartos) {
             $request->getRouter()->redirect('/');
@@ -179,7 +179,6 @@ class Aps
         if (!$tipos_q instanceof Tipo_quartos) {
             $request->getRouter()->redirect('/');
         }
-
 
 
         $usuario = User::getUserByEmail($_SESSION['hotelger']['email'])->fetchObject(User::class);
@@ -357,10 +356,11 @@ class Aps
      * @param Request $request
      * @param int $numeroap
      */
-    public static function getPagar($request, $numeroap)
+    public static function getPagar($request, $codigo)
     {
 
-        $ap = Apartamentos::getApsByAtivos($numeroap)->fetchObject(Apartamentos::class);
+        $ap = Apartamentos::getApsByAtivosCodigo($codigo)->fetchObject(Apartamentos::class);
+
 
         if (!$ap instanceof Apartamentos) {
             $request->getRouter()->redirect('/');
@@ -379,17 +379,16 @@ class Aps
      * @param Request $request
      * @param int $numeroap
      */
-    public static function postPagar($request, $numeroap)
+    public static function postPagar($request, $codigo)
     {
         $postVars = $request->getPostVars();
 
-        $ap = Apartamentos::getApsByAtivos($numeroap)->fetchObject(Apartamentos::class);
+        $ap = Apartamentos::getApsByAtivosCodigo($codigo)->fetchObject(Apartamentos::class);
 
         if (!$ap instanceof Apartamentos) {
             $request->getRouter()->redirect('/');
         }
         date_default_timezone_set('America/Sao_Paulo');
-        $ap->status = 2;
         $ap->data_pag = date('Y-m-d H:i:s');
         $ap->tipo_pagamento = $postVars['pagamento'];
         $ap->pagar();
@@ -440,17 +439,23 @@ class Aps
 
     public static function getHospedarAgora($request, $codigo)
     {
-        $ap = Apartamentos::getApsByRervado($codigo)->fetchObject(Apartamentos::class);
-
-       
+        $ap = Apartamentos::getApsByRervado($codigo)->fetchObject(Apartamentos::class); 
+      
+        //EXIST RESERVA?
         if (!$ap instanceof Apartamentos) {
             $request->getRouter()->redirect('/');
         }
+        $app = Apartamentos::getApsByAtivos($ap->numero_ap)->fetchObject(Apartamentos::class);
+
+        if ($app instanceof Apartamentos) {
+            $request->getRouter()->redirect("/reservas/$ap->codigo?status=501");
+        }
+        //EXIST ATIVO
 
         $ap->status = 1;
         $ap->setAtiveReservaToHospeda();
 
-        $request->getRouter()->redirect('/');
+        $request->getRouter()->redirect('/?status=200');
     }
 
     public static function getHoraSaida($request, $codigo)
@@ -500,4 +505,73 @@ class Aps
 
         $request->getRouter()->redirect("/ap/$ap->numero_ap");
     }
+
+
+    public static function getHoraEntrada($request, $codigo)
+    {
+        $ap = Apartamentos::getApEditeOcupado($codigo)->fetchObject(Apartamentos::class);
+
+        $container = View::render("aps/edite_ap_s", [
+            "numeroap"  => $ap->numero_ap,
+            "reserva"   => date("d/m/Y H:i", strtotime($ap->data_reserva)) . "hrs",
+            "entrada"   => date("d/m/Y H:i", strtotime($ap->data_entrada)) . "hrs",
+            "saida"     => date("d/m/Y H:i", strtotime($ap->data_saida)) . "hrs",
+            "numero-ap" => $ap->numero_ap . "hrs"
+        ]);
+
+        return Page::getPage($container, $request);
+    }
+
+    public static function setHoraEntrada($request, $codigo)
+    {
+        $ap = Apartamentos::getApEditeOcupado($codigo)->fetchObject(Apartamentos::class);
+
+        if (!$ap instanceof Apartamentos) {
+            $request->getRouter()->redirect('/');
+        }
+
+        $postVars         = $request->getPostVars();
+        $ap->data_entrada = $postVars['entrada-data'] . ' ' . $postVars['entrada-hora'] . ':00';
+
+        $date1 = new DateTime($ap->data_entrada);
+        $date2 = new DateTime($ap->data_saida);
+
+        $diferenca = $date1->diff($date2);
+
+        $ap->quantidade = $diferenca->days;
+
+        $ap->atualizaDataEntrada();
+
+        $request->getRouter()->redirect("/ap/$ap->numero_ap");
+    }
+
+
+    public static function getFinalizarAp($request, $codigo)
+    {
+        $ap = Apartamentos::getApsByAtivosID($codigo)->fetchObject(Apartamentos::class);
+
+        if(!$ap instanceof Apartamentos){
+            $request->getRouter()->redirect("/?status=404");
+        }
+
+        $container = View::render('aps/finalizar', ['numeroap'=>$ap->numero_ap]);
+
+        return Page::getPage($container, $request);
+       
+    }
+
+    public static function setFinalizarAp($request, $codigo)
+    {
+        $ap = Apartamentos::getApsByAtivosID($codigo)->fetchObject(Apartamentos::class);
+
+        if(!$ap instanceof Apartamentos){
+        $request->getRouter()->redirect("/?status=404");
+        }
+        $ap->status = 2;    
+        $ap->finalizar();
+        
+        $request->getRouter()->redirect("/?status=200");
+       
+    }
+
 }

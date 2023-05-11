@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Web;
 
+use App\Controllers\Web\Main\Main;
 use App\Models\Apartamentos;
 use App\Models\Cliente_hospedado;
 use App\Models\Produtos_aps;
@@ -17,11 +18,16 @@ class Reservas
 
         $itens = "";
         while ($res = $reservas->fetchObject(Apartamentos::class)) {
+            $hospede  = Cliente_hospedado::getClienteHospedado($res->codigo)->fetchObject(Cliente_hospedado::class);
+
+
             $itens .= View::render('reservas/item', [
                 "ap"         => $res->numero_ap,
                 "entrada"    => date('d/m/Y H:i', strtotime($res->data_entrada)),
                 "saida"      => date('d/m/Y H:i', strtotime($res->data_saida)),
-                "codigo"     => $res->codigo
+                "codigo"     => $res->codigo,
+                "cliente"    => $hospede->nome
+
             ]);
         }
 
@@ -93,6 +99,7 @@ class Reservas
         $totalAll = $totalAll + (($ap->valor_total / 24) * $diferenca->h);
 
 
+
         $ativado = View::render('aps/ativo', [
             'numero' => $ap->numero_ap,
             'data_r' => date('H:i d/m/Y', strtotime($ap->data_reserva)),
@@ -102,11 +109,16 @@ class Reservas
             'diaria' => $diferenca->h == 0 ? $ap->quantidade . " Diária's" : $ap->quantidade . ' Diárias e ' . $diferenca->h . 'Horas',
             'clientes' => $contentClientes,
             'tablepro' => $ap->status == 0 ? "" : $table,
-            'codigo'  => $codigo,
+            'codigo'   => $codigo,
             'numeroap' => $ap->numero_ap,
+            'tipo'     => $ap->data_pag != "" ? Main::tipoPagamento($ap->tipo_pagamento) : "",
             'button-hospedar'   => $ap->status == 0 ? View::render('aps/button', ['numeroap' => $ap->codigo]) : '',
-            'button-pagar' => $ap->status == 0 ? "" : View::render('aps/button_pagar', ['numeroap' => $ap->numero_ap]),
-            'consumo_prods' => $ap->status == 0 ? "" : View::render('aps/consumo_prods', ['codigo' => $ap->numero_ap])
+            'button-pagar'  => $ap->status == 0 ? "" : View::render('aps/button_pagar', ['numeroap' => $ap->numero_ap]),
+            'consumo_prods' => $ap->status == 0 ? "" : View::render('aps/consumo_prods', ['codigo' => $ap->numero_ap]),
+            'button-finalizar' => $ap->data_pag == "" ? View::render('aps/button_pagar', ['numeroap' => $ap->codigo]) : "",
+            'status' => $ap->data_pag == "" ? "Pendente" : "Pago"
+
+
 
         ]);
 
@@ -123,11 +135,15 @@ class Reservas
 
         $itens = "";
         while ($res = $reservas->fetchObject(Apartamentos::class)) {
+
+            $cliente = Cliente_hospedado::getClienteHospedado($res->codigo)->fetchObject(Cliente_hospedado::class);
+
             $itens .= View::render('reservas/item', [
                 "ap"         => $res->numero_ap,
                 "entrada"    => date('d-m-Y H:i', strtotime($res->data_entrada)),
                 "saida"      => date('d-m-Y H:i', strtotime($res->data_saida)),
-                "codigo"     => $res->codigo
+                "codigo"     => $res->codigo,
+                "cliente"       => $cliente->nome
             ]);
         }
 

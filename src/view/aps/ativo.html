@@ -10,10 +10,15 @@
         <div class="header-1">
             <h1 style="font-size:34px;">Ap/Quarto {{numero}}</h1>
             <h2>Data Reserva: {{data_r}}</h2>
-            <h2>Data Entrada: {{data_e}}</h2>
+            <a href="{{URL}}/hora-entrada/{{codigo}}">
+                <h2>Data Entrada: {{data_e}}</h2>
+            </a>
             <a href="{{URL}}/hora-saida/{{codigo}}">
                 <h2>Data Saída: {{data_s}}</h2>
             </a>
+            <h2>Status: {{status}}</h2>
+            <h2>{{tipo}}</h2>
+
         </div>
         <hr>
         <div class="header-valor">
@@ -58,6 +63,8 @@
     <div class="box" style="margin-bottom: 24px;">
 
         {{button-hospedar}}
+
+        {{button-finalizar}}
 
         {{button-pagar}}
 

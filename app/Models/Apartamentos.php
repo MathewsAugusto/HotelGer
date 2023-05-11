@@ -35,22 +35,42 @@ class Apartamentos
         return self::getAps("numero_ap = '$numeroap' AND status = 1");
     }
 
+    /**
+     * retorna um Ap Ativo parametro codigo
+     *
+     * @param int $codigo
+     */
+    public static function getApsByAtivosID($codigo)
+    {
+        return self::getAps("codigo = '$codigo' AND status = 1");
+    }
+
+  
+
     public static function getApsByAtivosCodigo($codigo)
     {
         return self::getAps("codigo = '$codigo' AND status <= 1");
     }
-    
 
+    public static function getApsReceber()
+    {
+        return self::getAps("data_pag is NULL AND status = 2");
+    }
+
+    public static function getApsReceberCodigo($codigo)
+    {
+        return self::getAps("data_pag is NULL AND status = 2 AND codigo = $codigo");
+    }
 
     public static function getReservas()
     {
-        return self::getAps("status = 0");
+        return self::getAps("status = 0", 'data_entrada ASC');
     }
 
 
     public static function getRecibo($numeroAp)
     {
-        return self::getAps("codigo = '$numeroAp' AND status = 2");
+        return self::getAps("codigo = '$numeroAp' AND status <= 2");
     }
 
 
@@ -94,7 +114,7 @@ class Apartamentos
         );
     }
 
-    
+
     public function atualizaDataSaida()
     {
         return (new Database('apartamentos'))->update(
@@ -107,6 +127,18 @@ class Apartamentos
             ]
         );
     }
+    public function atualizaDataEntrada()
+    {
+        return (new Database('apartamentos'))->update(
+            "codigo = $this->codigo",
+            [
+                'quantidade' => $this->quantidade,
+                "data_entrada" => $this->data_entrada
+
+            ]
+        );
+    }
+
 
     public function pagar()
     {
@@ -120,12 +152,24 @@ class Apartamentos
         );
     }
 
+    public function finalizar()
+    {
+        return (new Database('apartamentos'))->update(
+            "codigo = $this->codigo",
+            [
+                'status' => $this->status,
+
+            ]
+        );
+    }
+
     public function cancelar()
     {
         return (new Database('apartamentos'))->update(
             "codigo = $this->codigo",
             [
-                'status' => 3
+                'status' => 3,
+                'data_pag'=>null
             ]
         );
     }
@@ -142,17 +186,20 @@ class Apartamentos
 
     public function setAtiveReservaToHospeda()
     {
-        return (new Database('apartamentos'))->update("numero_ap = $this->numero_ap AND codigo = $this->codigo",[
-              "status"=> $this->status 
+        return (new Database('apartamentos'))->update("numero_ap = $this->numero_ap AND codigo = $this->codigo", [
+            "status" => $this->status
         ]);
     }
 
     public function excluir()
     {
         return (new Database('apartamentos'))->update(
-            "codigo = $this->codigo",[
-            'status'=>3]
-           
+            "codigo = $this->codigo",
+            [
+                'data_pag' => null,
+                'status' => 3
+            ]
+
         );
     }
 
@@ -160,5 +207,4 @@ class Apartamentos
     {
         return self::getAps("codigo = $codigo");
     }
-
 }

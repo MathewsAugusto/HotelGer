@@ -20,6 +20,10 @@
   --cor-yellow: linear-gradient(55deg, #f7f707eb, #f7341a);
   --cor-red: linear-gradient(55deg, #f7341a, #3f48cc);
   --cor-sucess: linear-gradient(90deg, #1c9747, #0cef7e);
+
+  --light-red: #f77066;
+  --blue: #2196f3;
+  --light-blue: #51adf6;
 }
 * {
   margin: 0;
@@ -376,7 +380,8 @@ td,
 th {
   padding: 0.2rem;
   border-radius: 2px;
-  box-shadow: 6px 0 6px 0 #574c4c;
+  outline: 1px solid;
+  /* box-shadow: 6px 0 6px 0 #574c4c; */
 }
 
 .card-detalhado {
@@ -476,6 +481,10 @@ th {
 .modulos-itens > input {
   right: 0;
 }
+
+
+
+
 
 @media print {
   .nav {

@@ -67,6 +67,9 @@ class Page
             case '500':
                 $view = Alert::getError("Ap está ocupado, escolha outro Ap");
                 break;
+            case '501':
+                $view = Alert::getError("O AP já está ocupado, reserva não aceita");
+                break;
         }
         return $view;
     }

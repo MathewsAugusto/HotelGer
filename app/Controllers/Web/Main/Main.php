@@ -87,12 +87,12 @@ class Main
 
         if (!$ap instanceof Apartamentos) {
 
-            
+
 
             $desativado = View::render('aps/desativado', [
                 'codigo' => $codigo,
                 'ap'     => $codigo,
-              
+
             ]);
 
             $content = View::render('aps/index', [
@@ -115,8 +115,6 @@ class Main
                 ]);
             }
             $produtos = Produtos_aps::getProdutosbyAps($ap->codigo);
-
-
             $listaProdutos = '';
             $totalProduto = 0;
             while ($prod = $produtos->fetchObject(Produtos_aps::class)) {
@@ -135,12 +133,12 @@ class Main
             ]);
 
 
-            $totalAll = $totalProduto + ($ap->valor_total * $ap->quantidade);
+            
             $date1 = new DateTime($ap->data_entrada);
             $date2 = new DateTime($ap->data_saida);
 
             $diferenca = $date1->diff($date2);
-
+            $totalAll = $totalProduto + ($ap->valor_total * $diferenca->days);
             $totalAll = $totalAll + (($ap->valor_total / 24) * $diferenca->h);
 
 
@@ -152,19 +150,37 @@ class Main
                 'valor'  => number_format($totalAll, 2, ",", "."),
                 'diaria' => $diferenca->h == 0 ? $ap->quantidade . " Diária's" : $ap->quantidade . ' Diárias e ' . $diferenca->h . 'Horas',
                 'clientes' => $contentClientes,
-                'tablepro' => $ap->status == 0 ? "" :$table,
+                'tablepro' => $ap->status == 0 ? "" : $table,
                 'codigo'  => $ap->codigo,
                 'numeroap' => $ap->numero_ap,
                 'button-hospedar'   => $ap->status == 0 ? View::render('aps/button', ['numeroap' => $ap->numero_ap]) : '',
-                'button-pagar' => $ap->status == 0 ? "" : View::render('aps/button_pagar', ['numeroap' => $ap->numero_ap]),
-                'consumo_prods'=> $ap->status == 0 ? "" : View::render('aps/consumo_prods', ['codigo' => $ap->numero_ap])
-
+                'button-pagar' => $ap->data_pag != "" ? "" : View::render('aps/button_pagar', ['numeroap' => $ap->codigo]),
+                'consumo_prods' => $ap->status == 0 ? "" : View::render('aps/consumo_prods', ['codigo' => $ap->numero_ap]),
+                'status' => $ap->data_pag == "" ? "Pendente" : "Pago",
+                'button-finalizar' => View::render('aps/button_finish', ['codigo' => $ap->codigo]),
+                'tipo' => $ap->data_pag != "" ? self::tipoPagamento($ap->tipo_pagamento) : ""
             ]);
 
             $content = View::render('aps/index', ['content' =>  $ativado]);
         }
 
         return Page::getPage($content, $request);
+    }
+
+
+    public static function tipoPagamento($tipo)
+    {
+        switch ($tipo) {
+            case 0:
+                return "<h2>Pag Via: Dinheiro</h2>";
+                break;
+            case 1:
+                return "<h2>Pag Via: Pix</h2>";
+                break;
+            case 2:
+                return "<h2>Pag Via: Cartão</h2>";
+                break;
+        }
     }
 
     /**
