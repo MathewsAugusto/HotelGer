@@ -133,7 +133,7 @@ class Main
             ]);
 
 
-            
+
             $date1 = new DateTime($ap->data_entrada);
             $date2 = new DateTime($ap->data_saida);
 
@@ -141,8 +141,34 @@ class Main
             $totalAll = $totalProduto + ($ap->valor_total * $diferenca->days);
             $totalAll = $totalAll + (($ap->valor_total / 24) * $diferenca->h);
 
+        
+            $din =  $cart = $pix = 0;
+
+
+
+            $valores = json_decode($ap->pagamentos);
+
+            //DINHEIRO CONVERSÃO
+            $dinheiroConversao = str_replace('.', '', $valores->dinheiro);
+            $din = str_replace(',', '.', $dinheiroConversao);
+
+
+            //PIX CONVERSÃO
+            $pixConversao = str_replace('.', '', $valores->pix);
+            $pix = str_replace(',', '.', $pixConversao);
+
+
+            //CARTAO CONVERSÃO
+            $cartaoConversao = str_replace('.', '', $valores->cartao);
+            $cart = str_replace(',', '.', $cartaoConversao);
+
+
+            if ($din + $pix + $cart < $totalAll)  $statusAP = "Pago Parcialmente";
+            if ($din + $pix + $cart == $totalAll) $statusAP = "Pago✅";
+
 
             $ativado = View::render('aps/ativo', [
+                'title' => 'Hospedagem',
                 'numero' => $ap->numero_ap,
                 'data_r' => date('H:i d/m/Y', strtotime($ap->data_reserva)),
                 'data_e' => date('H:i d/m/Y', strtotime($ap->data_entrada)),
@@ -154,11 +180,11 @@ class Main
                 'codigo'  => $ap->codigo,
                 'numeroap' => $ap->numero_ap,
                 'button-hospedar'   => $ap->status == 0 ? View::render('aps/button', ['numeroap' => $ap->numero_ap]) : '',
-                'button-pagar' => $ap->data_pag != "" ? "" : View::render('aps/button_pagar', ['numeroap' => $ap->codigo]),
+                'button-pagar' => $din + $pix + $cart == $totalAll ? "" : View::render('aps/button_pagar', ['numeroap' => $ap->codigo, 'rota'=>'ap']),
                 'consumo_prods' => $ap->status == 0 ? "" : View::render('aps/consumo_prods', ['codigo' => $ap->numero_ap]),
-                'status' => $ap->data_pag == "" ? "Pendente" : "Pago",
+                'status' => $statusAP,
                 'button-finalizar' => View::render('aps/button_finish', ['codigo' => $ap->codigo]),
-                'tipo' => $ap->data_pag != "" ? self::tipoPagamento($ap->tipo_pagamento) : ""
+                //'tipo' => $ap->data_pag != "" ? self::tipoPagamento($ap->tipo_pagamento) : ""
             ]);
 
             $content = View::render('aps/index', ['content' =>  $ativado]);

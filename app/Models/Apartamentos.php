@@ -19,6 +19,8 @@ class Apartamentos
     public $usuario_pag;
     public $status;
     public $usuario_create;
+    public $pagamentos = '{"dinheiro":"0,00", "pix":"0,00", "cartao":"0,00"}';
+    public $pendente;
 
     public static function getAps($where = null, $order = null, $limit = null, $fields = '*')
     {
@@ -45,7 +47,7 @@ class Apartamentos
         return self::getAps("codigo = '$codigo' AND status = 1");
     }
 
-  
+
 
     public static function getApsByAtivosCodigo($codigo)
     {
@@ -54,12 +56,12 @@ class Apartamentos
 
     public static function getApsReceber()
     {
-        return self::getAps("data_pag is NULL AND status = 2");
+        return self::getAps("pendente = 1 AND status = 2");
     }
 
     public static function getApsReceberCodigo($codigo)
     {
-        return self::getAps("data_pag is NULL AND status = 2 AND codigo = $codigo");
+        return self::getAps("pendente = 1 AND status = 2 AND codigo = $codigo");
     }
 
     public static function getReservas()
@@ -94,7 +96,8 @@ class Apartamentos
             'valor_total' => $this->valor_total,
             'status'      => $this->status,
             'usuario_create' => $this->usuario_create,
-            'quantidade'   => $this->quantidade
+            'quantidade'   => $this->quantidade,
+            'pagamentos'   => $this->pagamentos
         ]);
         return true;
     }
@@ -145,7 +148,7 @@ class Apartamentos
         return (new Database('apartamentos'))->update(
             "codigo = $this->codigo",
             [
-                'tipo_pagamento' => $this->tipo_pagamento,
+                'pagamentos' => $this->pagamentos,
                 'status' => $this->status,
                 'data_pag' => $this->data_pag
             ]
@@ -158,6 +161,7 @@ class Apartamentos
             "codigo = $this->codigo",
             [
                 'status' => $this->status,
+                'pendente' => $this->pendente
 
             ]
         );
@@ -169,7 +173,7 @@ class Apartamentos
             "codigo = $this->codigo",
             [
                 'status' => 3,
-                'data_pag'=>null
+                'data_pag' => null
             ]
         );
     }

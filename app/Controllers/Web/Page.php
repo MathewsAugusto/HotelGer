@@ -70,6 +70,9 @@ class Page
             case '501':
                 $view = Alert::getError("O AP já está ocupado, reserva não aceita");
                 break;
+            case 'pg00':
+                $view = Alert::getError("O valor de pagamento não pode ser maior que o valor total do Ap");
+                break;
         }
         return $view;
     }

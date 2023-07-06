@@ -60,9 +60,11 @@ class Tipos
     {
         $postVars = $request->getPostVars();
 
+        $valor = str_replace(".", "",$postVars['valor']);
+
         $tipo = new Tipo_quartos;
         $tipo->descricao = $postVars['descricao'];
-        $tipo->valor     = str_replace(",", ".",$postVars['valor']);
+        $tipo->valor     = str_replace(",", ".",$valor);
         $tipo->max       = $postVars['max'];
         $tipo->status    = 1;
         $tipo->insert();

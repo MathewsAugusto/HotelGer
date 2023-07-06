@@ -56,6 +56,42 @@ class Reservas
             $request->getRouter()->redirect('/');
         }
 
+        $produtos = Produtos_aps::getProdutosbyAps($ap->codigo);
+
+        $totalProduto = 0;
+        while ($prod = $produtos->fetchObject(Produtos_aps::class)) {
+            $totalProduto = $totalProduto + ($prod->valor * $prod->quantidade);
+        }
+
+        $date1 = new DateTime($ap->data_entrada);
+        $date2 = new DateTime($ap->data_saida);
+
+        $diferenca = $date1->diff($date2);
+        $totalAll = $totalProduto + ($ap->valor_total * $diferenca->days);
+        $totalAll = $totalAll + (($ap->valor_total / 24) * $diferenca->h);
+        $din =  $cart = $pix = 0;
+
+
+
+        $valores = json_decode($ap->pagamentos);
+
+        //DINHEIRO CONVERSÃO
+        $dinheiroConversao = str_replace('.', '', $valores->dinheiro);
+        $din = str_replace(',', '.', $dinheiroConversao);
+
+        //PIX CONVERSÃO
+        $pixConversao = str_replace('.', '', $valores->pix);
+        $pix = str_replace(',', '.', $pixConversao);
+
+
+        //CARTAO CONVERSÃO
+        $cartaoConversao = str_replace('.', '', $valores->cartao);
+        $cart = str_replace(',', '.', $cartaoConversao);
+
+
+        if ($din + $pix + $cart < $totalAll)  $statusAP = "Pago Parcialmente";
+        if ($din + $pix + $cart == $totalAll) $statusAP = "Pago✅";
+
         $clientes = Cliente_hospedado::getClienteHospedado($ap->codigo);
 
 
@@ -90,17 +126,16 @@ class Reservas
         ]);
 
 
-        $totalAll = $totalProduto + ($ap->valor_total * $ap->quantidade);
+       /*  $totalAll = $totalProduto + ($ap->valor_total * $ap->quantidade);
         $date1 = new DateTime($ap->data_entrada);
         $date2 = new DateTime($ap->data_saida);
 
         $diferenca = $date1->diff($date2);
 
-        $totalAll = $totalAll + (($ap->valor_total / 24) * $diferenca->h);
-
-
+        $totalAll = $totalAll + (($ap->valor_total / 24) * $diferenca->h); */
 
         $ativado = View::render('aps/ativo', [
+            'title' => 'Reserva',
             'numero' => $ap->numero_ap,
             'data_r' => date('H:i d/m/Y', strtotime($ap->data_reserva)),
             'data_e' => date('H:i d/m/Y', strtotime($ap->data_entrada)),
@@ -113,10 +148,12 @@ class Reservas
             'numeroap' => $ap->numero_ap,
             'tipo'     => $ap->data_pag != "" ? Main::tipoPagamento($ap->tipo_pagamento) : "",
             'button-hospedar'   => $ap->status == 0 ? View::render('aps/button', ['numeroap' => $ap->codigo]) : '',
-            'button-pagar'  => $ap->status == 0 ? "" : View::render('aps/button_pagar', ['numeroap' => $ap->numero_ap]),
+            'button-pagar' => $din + $pix + $cart == $totalAll ? "" : View::render('aps/button_pagar', ['numeroap' => $ap->codigo, 'rota'=>'reservas']),
             'consumo_prods' => $ap->status == 0 ? "" : View::render('aps/consumo_prods', ['codigo' => $ap->numero_ap]),
             'button-finalizar' => $ap->data_pag == "" ? View::render('aps/button_pagar', ['numeroap' => $ap->codigo]) : "",
-            'status' => $ap->data_pag == "" ? "Pendente" : "Pago"
+            'status' => $statusAP,
+            
+
 
 
 

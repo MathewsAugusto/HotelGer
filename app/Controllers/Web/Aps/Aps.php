@@ -6,6 +6,7 @@ use App\Controllers\Web\Page;
 use App\Models\Apartamentos;
 use App\Models\Cliente;
 use App\Models\Cliente_hospedado;
+use App\Models\Log_Pagamentos;
 use App\Models\Produtos;
 use App\Models\Produtos_aps;
 use App\Models\Tipo_quartos;
@@ -360,14 +361,42 @@ class Aps
     {
 
         $ap = Apartamentos::getApsByAtivosCodigo($codigo)->fetchObject(Apartamentos::class);
-
-
         if (!$ap instanceof Apartamentos) {
             $request->getRouter()->redirect('/');
         }
 
+        $rota = $request->getQueryParams();
+
+
+
+        $date1 = new DateTime($ap->data_entrada);
+        $date2 = new DateTime($ap->data_saida);
+        $difereca = $date1->diff($date2);
+
+        $diarias = $difereca->days;
+        $horas   = $difereca->h;
+        $valorHoras = $ap->valor_total / 24;
+        $valores = json_decode($ap->pagamentos);
+        $total = ($ap->valor_total * $diarias) + ($horas * $valorHoras);
+
+        $total_pago = json_decode($ap->pagamentos);
+
+        $t = floatval(str_replace(",", ".", str_replace(".", "", $total_pago->dinheiro))
+            + str_replace(",", ".", str_replace(".", "", $total_pago->pix))
+            + str_replace(",", ".", str_replace(".", "", $total_pago->cartao)));
+
+
         $container = View::render('aps/pagar/index', [
-            'numeroap' => $ap->numero_ap
+            'numeroap' => $ap->numero_ap,
+            'dinheiro' => $valores->dinheiro,
+            'pix'      => $valores->pix,
+            'cartao'   => $valores->cartao,
+            'total'    => number_format($t, 2, ",", "."),
+            'valor'    => number_format($total, 2, ",", "."),
+            'resto'    => number_format($total - $t, 2, ",", "."),
+            'rota'     => $rota['r'],
+            'codigo'   => $ap->codigo,
+            'rota_voltar' => $rota['r'] == 'ap' ? $ap->numero_ap : $ap->codigo
         ]);
 
         return Page::getPage($container, $request);
@@ -382,6 +411,10 @@ class Aps
     public static function postPagar($request, $codigo)
     {
         $postVars = $request->getPostVars();
+        $queryParams = $request->getQueryParams();
+
+
+        $user = User::getUserByEmail($_SESSION['hotelger']['email'])->fetchObject(User::class);
 
         $ap = Apartamentos::getApsByAtivosCodigo($codigo)->fetchObject(Apartamentos::class);
 
@@ -390,10 +423,86 @@ class Aps
         }
         date_default_timezone_set('America/Sao_Paulo');
         $ap->data_pag = date('Y-m-d H:i:s');
-        $ap->tipo_pagamento = $postVars['pagamento'];
+
+
+        //SOMA DOS VALORES JA PAGOS
+        $s1 = json_decode($ap->pagamentos);
+        $sDin = str_replace(".", "", $s1->dinheiro);
+        $sPix = str_replace(".", "", $s1->pix);
+        $sCart = str_replace(".", "", $s1->cartao);
+
+        $ss1 = floatval(str_replace(",", ".", $sDin)
+            + str_replace(",", ".", $sPix))
+            + str_replace(",", ".", $sCart);
+
+
+        //VALORES SENDO PAGOS POST
+        $dinheiroConversao = str_replace('.', '', $postVars['dinheiro']);
+        $din = str_replace(',', '.', $dinheiroConversao);
+
+
+        //PIX CONVERSÃO
+        $pixConversao = str_replace('.', '', $postVars['pix']);
+        $pix = str_replace(',', '.', $pixConversao);
+
+
+        //CARTAO CONVERSÃO
+        $cartaoConversao = str_replace('.', '', $postVars['cartao']);
+        $cart = str_replace(',', '.', $cartaoConversao);
+
+
+        $date1 = new DateTime($ap->data_entrada);
+        $date2 = new DateTime($ap->data_saida);
+        $difereca = $date1->diff($date2);
+
+        $diarias = $difereca->days;
+        $horas   = $difereca->h;
+        $valorHoras = $ap->valor_total / 24;
+        $tt = ($ap->valor_total * $diarias) + ($horas * $valorHoras);
+
+
+
+        if ($din + $pix + $cart > $tt || $din + $pix + $cart + $ss1 > $tt) {
+            $request->getRouter()->redirect("/pagar/$ap->codigo?status=pg00");
+        }
+
+        $ap->pagamentos = json_encode([
+            "dinheiro" => number_format(floatval(str_replace(",", ".", $sDin)) + $din, 2, ",", "."),
+            "pix" => number_format(floatval(str_replace(",", ".", $sPix)) + $pix, 2, ",", "."),
+            "cartao" => number_format(floatval(str_replace(",", ".", $sCart)) + $cart, 2, ",", ".")
+        ]);
+
+
         $ap->pagar();
 
-        $request->getRouter()->redirect('/recibo/' . $ap->codigo);
+        //PAGAR DINHEIRO
+        $log = new Log_Pagamentos;
+        $log->valor = $din;
+        $log->tipo = 0;
+        $log->codigo_ap = $ap->codigo;
+        $log->data = date('Y-m-d H:i:s');
+        $log->usuario = $user->codigo;
+        if ($din > 0) $log->insert();
+
+        //PAGAR PIX
+        $log = new Log_Pagamentos;
+        $log->valor = $pix;
+        $log->tipo = 1;
+        $log->codigo_ap = $ap->codigo;
+        $log->data = date('Y-m-d H:i:s');
+        $log->usuario = $user->codigo;
+        if ($pix > 0) $log->insert();
+
+        //PAGAR CARTAO
+        $log = new Log_Pagamentos;
+        $log->valor = $cart;
+        $log->tipo  = 2;
+        $log->codigo_ap = $ap->codigo;
+        $log->data  = date('Y-m-d H:i:s');
+        $log->usuario = $user->codigo;
+        if ($cart > 0) $log->insert();
+
+        $request->getRouter()->redirect('/pagar/' . $ap->codigo.'?r='.$queryParams['r']);
     }
 
     /**
@@ -439,8 +548,8 @@ class Aps
 
     public static function getHospedarAgora($request, $codigo)
     {
-        $ap = Apartamentos::getApsByRervado($codigo)->fetchObject(Apartamentos::class); 
-      
+        $ap = Apartamentos::getApsByRervado($codigo)->fetchObject(Apartamentos::class);
+
         //EXIST RESERVA?
         if (!$ap instanceof Apartamentos) {
             $request->getRouter()->redirect('/');
@@ -482,7 +591,8 @@ class Aps
         }
 
         $postVars = $request->getPostVars();
-        $numeroap = $postVars['numero-ap'];
+        $numeroap = intval($postVars['numero-ap']);
+
 
         if ($ap->numero_ap != $numeroap) {
             $newAp = Apartamentos::getApsByAtivos($numeroap)->fetchObject(Apartamentos::class);
@@ -550,28 +660,63 @@ class Aps
     {
         $ap = Apartamentos::getApsByAtivosID($codigo)->fetchObject(Apartamentos::class);
 
-        if(!$ap instanceof Apartamentos){
+        if (!$ap instanceof Apartamentos) {
             $request->getRouter()->redirect("/?status=404");
         }
 
-        $container = View::render('aps/finalizar', ['numeroap'=>$ap->numero_ap]);
+        $container = View::render('aps/finalizar', ['numeroap' => $ap->numero_ap]);
 
         return Page::getPage($container, $request);
-       
     }
 
     public static function setFinalizarAp($request, $codigo)
     {
         $ap = Apartamentos::getApsByAtivosID($codigo)->fetchObject(Apartamentos::class);
 
-        if(!$ap instanceof Apartamentos){
-        $request->getRouter()->redirect("/?status=404");
+        if (!$ap instanceof Apartamentos) {
+            $request->getRouter()->redirect("/?status=404");
         }
-        $ap->status = 2;    
-        $ap->finalizar();
-        
-        $request->getRouter()->redirect("/?status=200");
-       
-    }
+        $ap->status = 2;
 
+        $produtos = Produtos_aps::getProdutosbyAps($ap->codigo);
+        $totalProduto = 0;
+        while ($prod = $produtos->fetchObject(Produtos_aps::class)) {
+
+            $totalProduto = $totalProduto + ($prod->valor * $prod->quantidade);
+        }
+
+        $date1 = new DateTime($ap->data_entrada);
+        $date2 = new DateTime($ap->data_saida);
+
+        $diferenca = $date1->diff($date2);
+        $totalAll = $totalProduto + ($ap->valor_total * $diferenca->days);
+        $totalAll = $totalAll + (($ap->valor_total / 24) * $diferenca->h);
+
+        $din =  $cart = $pix = 0;
+
+
+        $valores = json_decode($ap->pagamentos);
+
+        //DINHEIRO CONVERSÃO
+        $dinheiroConversao = str_replace('.', '', $valores->dinheiro);
+        $din = str_replace(',', '.', $dinheiroConversao);
+
+
+        //PIX CONVERSÃO
+        $pixConversao = str_replace('.', '', $valores->pix);
+        $pix = str_replace(',', '.', $pixConversao);
+
+
+        //CARTAO CONVERSÃO
+        $cartaoConversao = str_replace('.', '', $valores->cartao);
+        $cart = str_replace(',', '.', $cartaoConversao);
+
+
+        if ($din + $pix + $cart < $totalAll)  $ap->pendente = 1;
+        if ($din + $pix + $cart == $totalAll) $ap->pendente = 0;
+
+        $ap->finalizar();
+
+        $request->getRouter()->redirect("/?status=200");
+    }
 }

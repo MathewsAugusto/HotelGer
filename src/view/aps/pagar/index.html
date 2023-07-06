@@ -1,23 +1,59 @@
 <div class="box-column">
-    <h2>Finalizando pagamento do Ap/Quarto</h2>
-    <h2>{{numeroap}}</h2>
-<hr style="margin-top: 24px;">
-    <form action="" method="post" class="box">
-        <label for="dinheiro">
-            <h3>Dinheiro</h3>
-        </label>
-        <input type="radio" name="pagamento"  id="" value="0" required>
-        <hr>
-        <label for="dinheiro">
-            <h3>Pix</h3>
-        </label>
-        <input type="radio" name="pagamento"  id="" value="1" required>
-        <hr>
-        <label for="dinheiro">
-            <h3>Cartão</h3>
-        </label>
-        <input type="radio" name="pagamento"  id="" value="2" required>
+    <a href="{{URL}}/{{rota}}/{{rota_voltar}}">
+        <button class="btn-voltar" style="margin: 8px;">◀ Voltar</button>
+    </a>
+    <h2>Detalhes de pagamentos - Ap/Quarto {{numeroap}}</h2>
 
-        <button style="margin-top: 24px;" class="btn-pay" type="submit">Finalizar pagamento</button>
-    </form>
+    <h2 style="text-align: end; margin-top: 24px;">Valor Total: {{valor}}</h2>
+    <hr>
+    <h2>Valores Pagos</h2>
+
+    <div class="box-pg">
+        <h2 style="text-align: left; width: 50%;">Dinheiro:</h2>
+        <h2 style="text-align: right;  width: 50%;">{{dinheiro}}</h2>
+    </div>
+    <div class="box">
+        <h2 style="text-align: left;  width: 50%;">Pix:</h2>
+        <h2 style="text-align: right;  width: 50%;">{{pix}}</h2>
+
+    </div>
+    <div class="box">
+        <h2 style="text-align: left;  width: 50%;">Cartão:</h2>
+        <h2 style="text-align: right;  width: 50%;">{{cartao}}</h2>
+    </div>
+
+    <div class="box">
+        <h2 style=" color: yellow; text-align: left;  width: 50%;">Total Pago:</h2>
+        <h2 style=" color: yellow; text-align: right;  width: 50%;">{{total}}</h2>
+    </div>
+    <div class="box">
+        <h2 style="color: brown; text-align: left;  width: 50%;">Restante:</h2>
+        <h2 style="color: brown; text-align: right;  width: 50%;">{{resto}}</h2>
+    </div>
+
+
 </div>
+<hr style="margin-top: 24px;">
+
+<form action="" method="post" class="box-din">
+
+
+    <h2 style="margin: 24px;">Novo pagamento</h2>
+
+    <label for="dinheiro">
+        <h3>Dinheiro</h3>
+    </label>
+    <input class="din" type="text" name="dinheiro" onKeyPress="return(moeda(this, '.', ',' ,event))" id="" value=""
+        required>
+
+    <label for="dinheiro">
+        <h3>Pix</h3>
+    </label>
+    <input type="text" name="pix" onKeyPress="return(moeda(this, '.', ',' ,event))" id="" value="" required>
+
+    <label for="dinheiro">
+        <h3>Cartão</h3>
+    </label>
+    <input type="text" name="cartao" onKeyPress="return(moeda(this, '.', ',' ,event))" id="" value="" required>
+    <button style="margin-top: 24px;" class="btn-pay" type="submit">Inserir pagamento</button>
+</form>

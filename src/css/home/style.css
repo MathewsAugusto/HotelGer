@@ -132,6 +132,13 @@ ul li:hover a {
   justify-content: space-around;
   justify-items: auto;
 }
+
+.box-pg {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+ 
+}
 .box-column {
   display: flex;
   flex-wrap: wrap;
@@ -251,10 +258,11 @@ input {
   padding: 8px;
   font-size: 1.3rem;
   border-style: none;
-  transition: 200ms ease-in;
+  transition: .2s ease-in;
 }
 input:hover {
-  transform: scale(1.1);
+  border-color: var(--light-red);
+  transform: scale(1.02);
 }
 
 .btn-add-tipo {
@@ -351,6 +359,24 @@ input:hover {
   border-radius: 22px;
   color: #f3f3f3;
   background: var(--cor-red);
+  box-shadow: 0 3px 6px 0 #574c4c;
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+.btn-voltar {
+  display: flex;
+  justify-content: start;
+  border-radius: 10px;
+  border-style: none;
+  background: rgb(243, 163, 163);
+  transition: .3s ease-in-out;
+  padding: 8px;
+}
+
+.btn-voltar:hover {
+  border-radius: 10px;
+  color: #f3f3f3;
   box-shadow: 0 3px 6px 0 #574c4c;
   cursor: pointer;
   transform: scale(1.1);
@@ -482,8 +508,15 @@ th {
   right: 0;
 }
 
+.box-din{
+  display: grid;
 
-
+  justify-content: center;
+  align-items: center;
+}
+.din{
+ 
+}
 
 
 @media print {
