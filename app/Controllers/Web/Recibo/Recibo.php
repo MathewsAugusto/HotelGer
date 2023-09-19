@@ -21,6 +21,7 @@ class Recibo
         $empresa = Empresa::getEmpresa()->fetchObject(Empresa::class);
         $ap = Apartamentos::getRecibo($codigo)->fetchObject(Apartamentos::class);
 
+
         if(!$ap instanceof Apartamentos){
            $request->getRouter()->redirect('/');     
         }
@@ -59,7 +60,7 @@ class Recibo
             'valor-desc' =>self::valorPorExtenso(($ap->valor_total * $diarias) + ($horas * $valorHoras) + $somaProdutos, false, false)
         ]);
 
-        return Page::getPage($container, $request);
+        return Page::getPage($container, $request, false);
     }
 
     public static function Mes($mes)

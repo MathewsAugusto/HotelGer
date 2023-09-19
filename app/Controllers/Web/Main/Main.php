@@ -6,7 +6,9 @@ use App\Controllers\Web\Page;
 use App\Models\Apartamentos;
 use App\Models\Cliente;
 use App\Models\Cliente_hospedado;
+use App\Models\Log_Pagamentos;
 use App\Models\Produtos_aps;
+use App\Models\User;
 use App\Utils\View;
 use DateTime;
 
@@ -84,9 +86,7 @@ class Main
     {
         $ap = Apartamentos::getApsByAtivos($codigo)->fetchObject(Apartamentos::class);
 
-
         if (!$ap instanceof Apartamentos) {
-
 
 
             $desativado = View::render('aps/desativado', [
@@ -141,7 +141,7 @@ class Main
             $totalAll = $totalProduto + ($ap->valor_total * $diferenca->days);
             $totalAll = $totalAll + (($ap->valor_total / 24) * $diferenca->h);
 
-        
+
             $din =  $cart = $pix = 0;
 
 
@@ -162,8 +162,8 @@ class Main
             $cartaoConversao = str_replace('.', '', $valores->cartao);
             $cart = str_replace(',', '.', $cartaoConversao);
 
-
-            if ($din + $pix + $cart < $totalAll)  $statusAP = "Pago Parcialmente";
+            $statusAP = "Pendente";
+            if ($din + $pix + $cart > 0)  $statusAP = "Pago Parcialmente";
             if ($din + $pix + $cart == $totalAll) $statusAP = "Pago✅";
 
 
@@ -180,7 +180,9 @@ class Main
                 'codigo'  => $ap->codigo,
                 'numeroap' => $ap->numero_ap,
                 'button-hospedar'   => $ap->status == 0 ? View::render('aps/button', ['numeroap' => $ap->numero_ap]) : '',
-                'button-pagar' => $din + $pix + $cart == $totalAll ? "" : View::render('aps/button_pagar', ['numeroap' => $ap->codigo, 'rota'=>'ap']),
+                'button-pagar' => View::render('aps/button_pagar', ['numeroap' => $ap->codigo, 'rota' => 'ap']),
+
+                //'button-pagar' => $din + $pix + $cart == $totalAll ? "" : View::render('aps/button_pagar', ['numeroap' => $ap->codigo, 'rota'=>'ap']),
                 'consumo_prods' => $ap->status == 0 ? "" : View::render('aps/consumo_prods', ['codigo' => $ap->numero_ap]),
                 'status' => $statusAP,
                 'button-finalizar' => View::render('aps/button_finish', ['codigo' => $ap->codigo]),
@@ -246,5 +248,82 @@ class Main
         $ap->updateQuantidade();
 
         $request->getRouter()->redirect("/ap/$numeroap");
+    }
+
+    public static function setConvert($request)
+    {
+        $aps = Apartamentos::getAps("status < 3");
+
+        date_default_timezone_set('America/Sao_Paulo');
+
+
+        while ($ap = $aps->fetchObject(Apartamentos::class)) {
+
+            $produtos = Produtos_aps::getProdutosbyAps($ap->codigo);
+            $totalProduto = 0;
+            while ($prod = $produtos->fetchObject(Produtos_aps::class)) {
+
+                $totalProduto = $totalProduto + ($prod->valor * $prod->quantidade);
+            }
+
+        
+            $date1 = new DateTime($ap->data_entrada);
+            $date2 = new DateTime($ap->data_saida);
+            $difereca = $date1->diff($date2);
+
+            $diarias = $difereca->days;
+            $horas   = $difereca->h;
+            $valorHoras = $ap->valor_total / 24;
+            $tt = ($ap->valor_total * $diarias) + ($horas * $valorHoras) + $totalProduto;
+
+
+            $log  = new Log_Pagamentos;
+            $log->valor = $tt;
+            $log->codigo_ap = $ap->codigo;
+            $log->data = $ap->data_pag;
+            $log->usuario = $ap->usuario_create;
+            switch ($ap->tipo_pagamento) {
+                case '0':
+                    $log->tipo = 0;
+                    $ap->pagamentos = json_encode([
+                        'dinheiro' => number_format($tt, 2, ",", "."),
+                        'pix' => "0,00",
+                        'cartao' => "0,00"
+                    ]);
+                    $log->insert();
+                    break;
+                case '1':
+                    $log->tipo = 1;
+
+                    $ap->pagamentos = json_encode([
+                        'dinheiro' => number_format($tt, 2, ",", "."),
+                        'pix' => "0,00",
+                        'cartao' => "0,00"
+                    ]);
+                    $log->insert();
+                    break;
+                case '2':
+                    $log->tipo = 2;
+                    $ap->pagamentos = json_encode([
+                        'dinheiro' => "0,00",
+                        'pix' => "0,00",
+                        'cartao' => number_format($tt, 2, ",", ".")
+                    ]);
+                    $log->insert();
+                    break;
+                case '':
+                    $ap->pagamentos = json_encode([
+                        'dinheiro' => "0,00",
+                        'pix' => "0,00",
+                        'cartao' => "0,00"
+                    ]);
+                    $ap->pendente = 1;
+                    break;
+            }
+
+                 
+            $ap->atualizaValores();
+        }
+       
     }
 }

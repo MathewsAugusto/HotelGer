@@ -1,0 +1,29 @@
+<form action="" method="post">
+    <div>
+
+        <div class="texto">
+            <h2>{{descricao}}</h2>
+            <h2>{{valor}}</h2>
+            <h2>{{vencimento}}</h2>
+        </div>
+        <hr>
+        <h2 style="margin-bottom: 24px;">Selecione o tipo de pagamento</h2>
+        <div class="box-pg">
+            <div>
+                <label for="pagamento" style="margin-top: 8px;">Dinheiro</label>
+                <input type="radio" name="pagamento" value="0" placeholder="0,00" required>
+            </div>
+            <div>
+                <label for="checkbox" style="margin-top: 8px;">Pix</label>
+                <input type="radio" name="pagamento" value="1" placeholder="00,00" required>
+            </div>
+            <div>
+                <label for="checkbox" style="margin-top: 8px;">Cartão</label>
+                <input type="radio" name="pagamento" value="2" placeholder="00,00" required>
+            </div>
+        </div>
+
+        <button style="margin-top: 2rem;" class="btn" type="submit">Pagar 💲</button>
+
+    </div>
+</form>

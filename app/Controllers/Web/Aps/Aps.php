@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Web\Aps;
 
+use App\Controllers\Web\Main\Main;
 use App\Controllers\Web\Page;
 use App\Models\Apartamentos;
 use App\Models\Cliente;
@@ -365,6 +366,31 @@ class Aps
             $request->getRouter()->redirect('/');
         }
 
+        $produtos = Produtos_aps::getProdutosbyAps($ap->codigo);
+        $totalProduto = 0;
+        while ($prod = $produtos->fetchObject(Produtos_aps::class)) {
+
+            $totalProduto = $totalProduto + ($prod->valor * $prod->quantidade);
+        }
+
+        $lista_pagamentos = Log_Pagamentos::getByCodigo($ap->codigo);
+        $viewPagamentos = "";
+
+        while ($pag = $lista_pagamentos->fetchObject(Log_Pagamentos::class)) {
+
+
+            $viewPagamentos .= View::render(
+                'aps/pagar/item',
+                [
+                    'valor' => number_format($pag->valor, 2, ',', '.'),
+                    'data'  => date('d/m/Y H:i:s', strtotime($pag->data)),
+                    'usuario' => $pag->nome,
+                    'tipo' => self::tipoPagamento($pag->tipo)
+                ]
+            );
+        }
+        $table = View::render('aps/pagar/table', ['itens' => $viewPagamentos]);
+
         $rota = $request->getQueryParams();
 
 
@@ -392,15 +418,34 @@ class Aps
             'pix'      => $valores->pix,
             'cartao'   => $valores->cartao,
             'total'    => number_format($t, 2, ",", "."),
-            'valor'    => number_format($total, 2, ",", "."),
-            'resto'    => number_format($total - $t, 2, ",", "."),
+            'valor'    => number_format($total + $totalProduto, 2, ",", "."),
+            'resto'    => number_format($total - $t + $totalProduto, 2, ",", "."),
             'rota'     => $rota['r'],
             'codigo'   => $ap->codigo,
-            'rota_voltar' => $rota['r'] == 'ap' ? $ap->numero_ap : $ap->codigo
+            'rota_voltar' => $rota['r'] == 'ap' ? $ap->numero_ap : $ap->codigo,
+            'table' => $table
+
         ]);
 
         return Page::getPage($container, $request);
     }
+
+
+    public static function tipoPagamento($tipo)
+    {
+        switch ($tipo) {
+            case 0:
+                return "Dinheiro";
+                break;
+            case 1:
+                return "Pix";
+                break;
+            case 2:
+                return "Cartão";
+                break;
+        }
+    }
+
 
     /**
      * POST PAGAR AP
@@ -424,6 +469,12 @@ class Aps
         date_default_timezone_set('America/Sao_Paulo');
         $ap->data_pag = date('Y-m-d H:i:s');
 
+        $produtos = Produtos_aps::getProdutosbyAps($ap->codigo);
+        $totalProduto = 0;
+        while ($prod = $produtos->fetchObject(Produtos_aps::class)) {
+
+            $totalProduto = $totalProduto + ($prod->valor * $prod->quantidade);
+        }
 
         //SOMA DOS VALORES JA PAGOS
         $s1 = json_decode($ap->pagamentos);
@@ -458,12 +509,12 @@ class Aps
         $diarias = $difereca->days;
         $horas   = $difereca->h;
         $valorHoras = $ap->valor_total / 24;
-        $tt = ($ap->valor_total * $diarias) + ($horas * $valorHoras);
+        $tt = ($ap->valor_total * $diarias) + ($horas * $valorHoras) + $totalProduto;
 
 
 
         if ($din + $pix + $cart > $tt || $din + $pix + $cart + $ss1 > $tt) {
-            $request->getRouter()->redirect("/pagar/$ap->codigo?status=pg00");
+            $request->getRouter()->redirect("/pagar/$ap->codigo?status=pg00&r=" . $queryParams['r']);
         }
 
         $ap->pagamentos = json_encode([
@@ -502,7 +553,7 @@ class Aps
         $log->usuario = $user->codigo;
         if ($cart > 0) $log->insert();
 
-        $request->getRouter()->redirect('/pagar/' . $ap->codigo.'?r='.$queryParams['r']);
+        $request->getRouter()->redirect('/pagar/' . $ap->codigo . '?r=' . $queryParams['r']);
     }
 
     /**

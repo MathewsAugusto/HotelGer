@@ -4,7 +4,7 @@ use App\Controllers\Web\login\Login;
 use App\Controllers\Web\Reports\Reports;
 use App\Http\Response;
 
-$router->get('/relatorio', [
+$router->get('/relatorios', [
     'middlewares' => [
         'login'
     ],

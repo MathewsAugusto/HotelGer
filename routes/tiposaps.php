@@ -1,7 +1,6 @@
 <?php
 
-use App\Controllers\Web\Aps\Aps;
-use App\Controllers\Web\Main\Main;
+
 use App\Controllers\Web\Tipos\Tipos;
 use App\Http\Response;
 

@@ -19,6 +19,12 @@ class Log_Pagamentos
         return (new Database('log_pagamentos'))->select($where, $order, $limit, $fields);
     }
 
+    public static function getByCodigo($codigo)
+    {
+        return (new Database("log_pagamentos AS l JOIN usuarios as u ON u.codigo = l.usuario")
+        )->select("codigo_ap = $codigo", null, null, "l.valor, l.data, u.nome, l.tipo");
+    }
+
     public static function select($codigo)
     {
         return self::getLog_pagamentos("codigo = $codigo")->fecthObject(self::class);
@@ -34,4 +40,6 @@ class Log_Pagamentos
             'usuario' => $this->usuario
         ]);
     }
+
+    
 }

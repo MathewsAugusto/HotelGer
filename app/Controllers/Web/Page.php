@@ -8,19 +8,40 @@ use App\Utils\View;
 class Page
 {
 
-    public static function getPage($container, $request)
-    {
+    public $modules = ['/home'=>"", '/reservas'=>"",
+     '/receber'=>"",  '/saidas'=>"",  '/produtos'=>"",
+     '/tipos'=>"",  '/relatorios'=>"",  '/clientes'=>"",  '/configuracao'=>""];
 
+    public static function getPage($container, $request, $menu = true)
+    {
+        $currentModule = $request->getQueryParams();
+     
+       
+       if(isset($currentModule['route'])){
+
+        $modules[$currentModule['route']] = "menu-select";
+
+       }else{
+        $modules['/home'] = "menu-select";
+       }
+     
         return View::render(
             'page/index',
             [
-                'menu'      => Page::rendeMenu(),
+                'menu'      => $menu == true ? Page::rendeMenu($modules) : "",
                 'container' => $container,
                 'status'    => self::getStatus($request),
                 'footer'    => self::footer()
             ]
         );
     }
+
+    public static function rendeMenu($datas = [])
+    {
+        return View::render('menu/index', $datas);
+    }
+
+   
 
     public static function footer()
     {
@@ -77,8 +98,5 @@ class Page
         return $view;
     }
 
-    public static function rendeMenu()
-    {
-        return View::render('menu/index', []);
-    }
+   
 }

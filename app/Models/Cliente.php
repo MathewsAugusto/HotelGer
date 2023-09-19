@@ -19,6 +19,12 @@ class Cliente{
         return (new Database('clientes'))->select($where, $order, $limit, $fields);
     }
 
+    public static function getClienteLike($text){
+
+        return self::getCliente("nome LIKE '$text%'");
+
+    }
+
     /**
      * retorna um Ap Ativo
      *

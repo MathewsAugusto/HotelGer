@@ -3,7 +3,7 @@
         <li>
             <img class="logo" style="display: block;" src="{{URL}}/src/imgs/logo50px.jpeg" alt="logo">
         </li>
-        <li><a href="{{URL}}/">
+        <li class="{{/home}}"><a href="{{URL}}/">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="feather feather-home">
@@ -13,19 +13,21 @@
                 <p>Ap's</p>
             </a>
         </li>
-        <li><a href="{{URL}}/reservas">
+        <li class="{{/reservas}}" ><a href="{{URL}}/reservas">
+
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:;">
+                    style="fill: rgba(0, 0, 0, 1);">
+                    <path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path>
                     <path
-                        d="M20 3H4c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zm-1 4v2h-5V7h5zm-5 4h5v2h-5v-2zM4 19V5h7v14H4z">
+                        d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z">
                     </path>
                 </svg>
                 <p>Reservas</p>
             </a>
         </li>
-        <li><a href="{{URL}}/receber">
+        <li class="{{/receber}}"><a href="{{URL}}/receber">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    style="fill: rgba(0, 0, 0, 1);transform: ;msFilter:;">
+                    style="fill: rgba(0, 0, 0, 1);">
                     <path
                         d="M21 11h-3V4a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v14c0 1.654 1.346 3 3 3h14c1.654 0 3-1.346 3-3v-6a1 1 0 0 0-1-1zM5 19a1 1 0 0 1-1-1V5h12v13c0 .351.061.688.171 1H5zm15-1a1 1 0 0 1-2 0v-5h2v5z">
                     </path>
@@ -34,7 +36,18 @@
                 <p>Receber</p>
             </a>
         </li>
-        <li><a href="{{URL}}/produtos">
+
+        <li class="{{/saidas}}"><a href="{{URL}}/saidas">
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 50 50">
+                    <path
+                        d="M 10.734375 1.0136719 C 10.25 1.0559219 9.7750156 1.2156875 9.3535156 1.4921875 C 8.5065156 2.0481875 8 2.986 8 4 L 8 19.386719 C 8 21.378719 9.1808125 23.178656 11.007812 23.972656 L 12.330078 24.548828 L 27.103516 18.654297 L 10 11.074219 L 10 6.1171875 L 32.992188 16.306641 L 35.699219 15.226562 C 35.930219 15.119563 36.203922 14.985531 36.419922 14.769531 C 36.794922 14.394531 37 13.896234 37 13.365234 C 37 12.834234 36.794922 12.334938 36.419922 11.960938 C 36.284922 11.826937 36.135125 11.716234 35.953125 11.615234 L 35.427734 11.347656 L 12.173828 1.2441406 C 11.712828 1.0466406 11.21875 0.97142187 10.734375 1.0136719 z M 38.978516 13.138672 C 38.982516 13.214672 39 13.287234 39 13.365234 C 39 14.430234 38.585984 15.431594 37.833984 16.183594 C 37.405984 16.612594 36.942813 16.855641 36.507812 17.056641 L 11.123047 27.199219 C 9.2260469 27.966219 8 29.781219 8 31.824219 L 8 46.003906 C 8 46.999906 8.4933125 47.926375 9.3203125 48.484375 C 9.8243125 48.824375 10.41 48.998047 11 48.998047 C 11.379 48.998047 11.760047 48.92725 12.123047 48.78125 L 37.498047 38.554688 C 39.024047 37.938688 40.007 36.478844 40 34.839844 L 40 15.492188 L 39.998047 15.492188 C 39.998047 14.662187 39.682781 13.831219 39.050781 13.199219 C 39.028781 13.177219 39.001516 13.159672 38.978516 13.138672 z M 26.158203 26.001953 C 27.661203 26.000953 29 27.213656 29 28.847656 C 29 30.818656 27.802609 32.590172 25.974609 33.326172 L 24 34.121094 L 24 35.634766 L 27 34.425781 L 27 36.582031 L 24 37.791016 L 24 39.193359 L 22 40 L 22 38.597656 L 21 39 L 21 36.84375 L 22 36.441406 L 22 34.927734 L 21 35.330078 L 21 33.169922 L 22 32.767578 L 22 27.460938 L 22 27.457031 L 25.089844 26.210938 C 25.444844 26.066938 25.806203 26.001953 26.158203 26.001953 z M 26.158203 28 C 26.052203 28 25.945844 28.022453 25.839844 28.064453 L 24 28.808594 L 24 31.966797 L 25.226562 31.472656 C 26.303562 31.038656 27 30.008656 27 28.847656 C 27 28.324656 26.563203 28 26.158203 28 z">
+                    </path>
+                </svg>
+                <p>Saídas</p>
+            </a>
+        </li>
+
+        <li class="{{/produtos}}"><a href="{{URL}}/produtos">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="feather feather-package">
@@ -48,7 +61,7 @@
                 <p>Produtos</p>
             </a>
         </li>
-        <li> <a href="{{URL}}/tipos">
+        <li class="{{/tipos}}"> <a href="{{URL}}/tipos">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="feather feather-list">
@@ -62,7 +75,7 @@
                 <p>Tipos Ap</p>
             </a>
         </li>
-        <li><a href="{{URL}}/relatorio">
+        <li class="{{/relatorios}}"><a href="{{URL}}/relatorios">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="feather feather-list">
@@ -76,7 +89,7 @@
                 <p>Relatórios</p>
             </a>
         </li>
-        <li><a href="{{URL}}/clientes">
+        <li class="{{/clientes}}"><a href="{{URL}}/clientes">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="feather feather-user">
@@ -88,7 +101,7 @@
         </li>
 
 
-        <li>
+        <li class="{{/configuracao}}" >
             <a href="{{URL}}/configuracao">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -99,7 +112,7 @@
                     </path>
                 </svg></a>
         </li>
-        <li>
+        <li >
             <a href="{{URL}}/logout">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"

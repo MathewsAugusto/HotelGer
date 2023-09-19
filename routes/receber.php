@@ -43,3 +43,10 @@ $router->post('/receber-excluir/{codigo}', [
         return new Response(201, Receber::setCancelar($request, $codigo));
     }
 ]);
+
+$router->get('/finalizar-receber/{codigo}', [
+    'middlewares'=>['sessao'],
+    function($request, $codigo){
+        return new Response(200, Receber::getFinalizar($request, $codigo));
+    }
+]);

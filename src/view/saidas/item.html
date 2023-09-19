@@ -1,0 +1,39 @@
+<tr>
+    <td>
+        <h4>{{descricao}}</h4>
+    </td>
+
+    <td>
+        <h4>{{vencimento}}</h4>
+    </td>
+
+    <td>
+        <h4 {{cor_sts}}>{{status}}</h4>
+    </td>
+    <td>
+        <h4>{{valor}}</h4>
+    </td>
+    <td>
+        <div class="box">
+            <a href="{{URL}}/saidas/editar/{{codigo}}">
+                <div class="card">
+                   Editar
+                </div>
+            </a>
+
+            <a href="{{URL}}/saidas/pagar/{{codigo}}">
+                <div class="card-yellow">
+                    Pagar
+
+                </div>
+            </a>
+
+            <a href="{{URL}}/saidas/cancelar/{{codigo}}">
+                <div class="card-danger">
+                    Cancelar
+                </div>
+            </a>
+
+        </div>
+    </td>
+</tr>

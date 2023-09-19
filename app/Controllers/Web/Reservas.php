@@ -14,29 +14,60 @@ class Reservas
 
     public static function getIndex($request)
     {
-        $reservas = Apartamentos::getReservas();
 
-        $itens = "";
-        while ($res = $reservas->fetchObject(Apartamentos::class)) {
-            $hospede  = Cliente_hospedado::getClienteHospedado($res->codigo)->fetchObject(Cliente_hospedado::class);
+        $queryParams = $request->getQueryParams();
+
+        if (isset($queryParams['buscar'])) {
+
+            $reservas = Apartamentos::getReservasLikeName($queryParams['buscar']);
+
+            $itens = "";
+            while ($res = $reservas->fetchObject(Apartamentos::class)) {
+                $hospede  = Cliente_hospedado::getClienteHospedado($res->codigo)->fetchObject(Cliente_hospedado::class);
 
 
-            $itens .= View::render('reservas/item', [
-                "ap"         => $res->numero_ap,
-                "entrada"    => date('d/m/Y H:i', strtotime($res->data_entrada)),
-                "saida"      => date('d/m/Y H:i', strtotime($res->data_saida)),
-                "codigo"     => $res->codigo,
-                "cliente"    => $hospede->nome
+                $itens .= View::render('reservas/item', [
+                    "ap"         => $res->numero_ap,
+                    "entrada"    => date('d/m/Y H:i', strtotime($res->data_entrada)),
+                    "saida"      => date('d/m/Y H:i', strtotime($res->data_saida)),
+                    "codigo"     => $res->codigo,
+                    "cliente"    => $hospede->nome
 
+                ]);
+            }
+
+            $container = View::render('reservas/index', [
+                "itens" => $itens,
+                "quarto" => "",
+                'button'   => "hidden",
+                'pesquisa' => View::render('reservas/pesquisa', [])
+            ]);
+        } else {
+
+            $reservas = Apartamentos::getReservas();
+
+            $itens = "";
+            while ($res = $reservas->fetchObject(Apartamentos::class)) {
+                $hospede  = Cliente_hospedado::getClienteHospedado($res->codigo)->fetchObject(Cliente_hospedado::class);
+
+
+                $itens .= View::render('reservas/item', [
+                    "ap"         => $res->numero_ap,
+                    "entrada"    => date('d/m/Y H:i', strtotime($res->data_entrada)),
+                    "saida"      => date('d/m/Y H:i', strtotime($res->data_saida)),
+                    "codigo"     => $res->codigo,
+                    "cliente"    => $hospede->nome
+
+                ]);
+            }
+
+            $container = View::render('reservas/index', [
+                "itens" => $itens,
+                "quarto" => "",
+                'button'   => "hidden",
+                'pesquisa' => View::render('reservas/pesquisa', [])
             ]);
         }
-
-        $container = View::render('reservas/index', [
-            "itens" => $itens,
-            "quarto" => "",
-            'button'   => "hidden"
-        ]);
-
         return Page::getPage($container, $request);
     }
 
@@ -89,7 +120,9 @@ class Reservas
         $cart = str_replace(',', '.', $cartaoConversao);
 
 
-        if ($din + $pix + $cart < $totalAll)  $statusAP = "Pago Parcialmente";
+        $statusAP = "Pendente";
+        
+        if ($din + $pix + $cart > 0)  $statusAP = "Pago Parcialmente";
         if ($din + $pix + $cart == $totalAll) $statusAP = "Pago✅";
 
         $clientes = Cliente_hospedado::getClienteHospedado($ap->codigo);
@@ -126,7 +159,7 @@ class Reservas
         ]);
 
 
-       /*  $totalAll = $totalProduto + ($ap->valor_total * $ap->quantidade);
+        /*  $totalAll = $totalProduto + ($ap->valor_total * $ap->quantidade);
         $date1 = new DateTime($ap->data_entrada);
         $date2 = new DateTime($ap->data_saida);
 
@@ -148,11 +181,11 @@ class Reservas
             'numeroap' => $ap->numero_ap,
             'tipo'     => $ap->data_pag != "" ? Main::tipoPagamento($ap->tipo_pagamento) : "",
             'button-hospedar'   => $ap->status == 0 ? View::render('aps/button', ['numeroap' => $ap->codigo]) : '',
-            'button-pagar' => $din + $pix + $cart == $totalAll ? "" : View::render('aps/button_pagar', ['numeroap' => $ap->codigo, 'rota'=>'reservas']),
+            'button-pagar' => View::render('aps/button_pagar', ['numeroap' => $ap->codigo, 'rota' => 'reservas']),
             'consumo_prods' => $ap->status == 0 ? "" : View::render('aps/consumo_prods', ['codigo' => $ap->numero_ap]),
-            'button-finalizar' => $ap->data_pag == "" ? View::render('aps/button_pagar', ['numeroap' => $ap->codigo]) : "",
+            'button-finalizar' => "", //$ap->data_pag == "" ? View::render('aps/button_pagar', ['numeroap' => $ap->codigo]) : "",
             'status' => $statusAP,
-            
+
 
 
 
@@ -185,9 +218,10 @@ class Reservas
         }
 
         $container = View::render('reservas/index', [
-            "itens" =>  $itens,
+            "itens"  =>  $itens,
             "quarto" => 'Ap ' . $ap,
-            "ap"    =>  $ap
+            "ap"     =>  $ap,
+            "pesquisa" => ""
         ]);
 
         return Page::getPage($container, $request);

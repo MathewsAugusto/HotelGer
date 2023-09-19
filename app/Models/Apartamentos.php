@@ -59,6 +59,26 @@ class Apartamentos
         return self::getAps("pendente = 1 AND status = 2");
     }
 
+    public static function getApsLikeName($text)
+    {
+
+        return (new Database('apartamentos AS ap 
+        JOIN cliente_hospedes as cli ON cli.codigo_hospedagem = ap.codigo 
+        JOIN clientes as c ON cli.clientes_codigo = c.codigo '))
+            ->select(
+                "ap.pendente = 1 AND ap.status = 2 AND c.nome LIKE '$text%'",
+                null,
+                null,
+                "ap.codigo as codigo,
+                 c.nome as nome,
+                 ap.valor_total as valor_total,
+                 ap.data_entrada as data_entrada,
+                 ap.data_saida as data_saida,
+                 ap.numero_ap  as numero_ap"
+            );
+    }
+
+
     public static function getApsReceberCodigo($codigo)
     {
         return self::getAps("pendente = 1 AND status = 2 AND codigo = $codigo");
@@ -67,6 +87,25 @@ class Apartamentos
     public static function getReservas()
     {
         return self::getAps("status = 0", 'data_entrada ASC');
+    }
+
+    public static function getReservasLikeName($text)
+    {
+
+        return (new Database('apartamentos AS ap 
+        JOIN cliente_hospedes as cli ON cli.codigo_hospedagem = ap.codigo 
+        JOIN clientes as c ON cli.clientes_codigo = c.codigo '))
+            ->select(
+                "ap.status = 0 AND c.nome LIKE '$text%'",
+                'data_entrada ASC',
+                null,
+                "ap.codigo as codigo,
+                 c.nome as nome,
+                 ap.valor_total as valor_total,
+                 ap.data_entrada as data_entrada,
+                 ap.data_saida as data_saida,
+                 ap.numero_ap  as numero_ap"
+            );
     }
 
 
@@ -167,6 +206,18 @@ class Apartamentos
         );
     }
 
+    public function finalizarReceber()
+    {
+        return (new Database('apartamentos'))->update(
+            "codigo = $this->codigo",
+            [
+                'usuario_pag' => $this->usuario_pag,
+                'pendente' => $this->pendente
+
+            ]
+        );
+    }
+
     public function cancelar()
     {
         return (new Database('apartamentos'))->update(
@@ -210,5 +261,15 @@ class Apartamentos
     public static function getApEditeOcupado($codigo)
     {
         return self::getAps("codigo = $codigo");
+    }
+
+
+
+    public function atualizaValores()
+    {
+        return (new Database('apartamentos'))->update("codigo = $this->codigo", [
+            'pagamentos' => $this->pagamentos,
+            'pendente'  => $this->pendente
+        ]);
     }
 }

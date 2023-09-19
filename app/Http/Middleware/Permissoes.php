@@ -35,7 +35,7 @@ class Permissoes
                     $request->getRouter()->redirect('/?status=401');
                 }
                 break;
-            case 'relatorio':
+            case 'relatorios':
                 if ($user->perm_relatorio == 0) {
                     $request->getRouter()->redirect('/?status=401');
                 }
@@ -50,7 +50,11 @@ class Permissoes
                     $request->getRouter()->redirect('/?status=401');
                 }
                 break;
-          
+            case 'saidas':
+                if ($user->perm_saidas == 0) {
+                    $request->getRouter()->redirect('/?status=401');
+                }
+                break;
         }
 
         //RETORNA O PROXIMO NIVEL DO MIDDLEWARE

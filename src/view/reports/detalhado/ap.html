@@ -6,7 +6,12 @@
     <h3>Saída: {{saida}}</h3>
     <hr>
     <h3>{{diarias}} - {{valord}}</h3>
-    <h3 style="text-align: right; font-size: 30px;" >Total: {{total}}</h3>
+    <div>
+         <h3 style="text-align: right; font-size: 30px;" >Total Pedido: {{total}}</h3>
+         <h3 style="text-align: right; font-size: 30px; color: brown;" >Total Recebido: {{total_recebido}}</h3>
+
+    </div>
+   
     <a  href="{{URL}}/recibo/{{codigo}}" target="_blank"><h6 style="text-align: right;">Recibo</h6></a>
     <hr>
     {{hospedes}}

@@ -1,18 +1,29 @@
-<table>
+<div class="box">
+    <form>
+        <div class="center">
+            <div id="divBusca">
+                <img style="width: 25px;" src="{{URL}}/src/imgs/search.png" alt="Buscar..." />
+                <input type="text" name="buscar" id="txtBusca" placeholder="Ex: Mateus Au..." />
 
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>CPF</th>
-            <th>Contato</th>
+            </div> <button name="" id="btn" style="margin-left: 8px;" class="btn">Pesquisar</button>
+        </div>
+    </form>
+    <table style="margin-top: 24px;">
 
-        </tr>
-    </thead>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Contato</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
 
-    <tbody>
+        <tbody>
 
-        {{itens}}
+            {{itens}}
 
-    </tbody>
+        </tbody>
 
-</table>
+    </table>
+</div>

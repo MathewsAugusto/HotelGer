@@ -10,7 +10,6 @@ class User
     public $nome;
     public $email;
     public $senha;
-    
     public $perm_ap = 0;
     public $perm_produtos = 0;
     public $perm_tipo = 0;

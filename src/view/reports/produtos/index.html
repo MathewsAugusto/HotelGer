@@ -1,20 +1,21 @@
-<h3 style="margin: 30px;">Relatório Saída de Produtos de {{dataI}} até {{dataF}}</h3>
+<div class="container">
+    <h3 style="margin: 30px;">Relatório Saída de Produtos de {{dataI}} até {{dataF}}</h3>
 
+    <table>
+        <tbody>
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>QNT</th>
+                    <th>Valor</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
 
-<table>
-    <thead>
-        <tr>
-            <th>Produto</th>
-            <th>QNT</th>
-            <th>Valor</th>
-            <th>Total</th>
-        </tr>
-
-    <tbody>
-        {{itens}}
-    </tbody>
-    </thead>
-</table>
-<div style="display: flex; justify-content: end; align-items: flex-end; width: 100vw;">
-    <h2 style="margin-right: 30px;">Total R${{totalall}}</h2>
+            {{itens}}
+        </tbody>
+    </table>
+    <div style="display: flex; justify-content: end; align-items: flex-end;">
+        <h2 style="margin-right: 30px;">Total R${{totalall}}</h2>
+    </div>
 </div>

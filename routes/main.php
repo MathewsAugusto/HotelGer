@@ -32,3 +32,13 @@ $router->get('/diaria/{type}/{codigo}', [
     }
 
 ]);
+
+/* $router->get('/convert', [
+    'middlewares' => [
+        'sessao'
+    ],
+    function ($request) {
+        return new Response(200, Main::setConvert($request));
+    }
+
+]); */

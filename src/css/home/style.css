@@ -30,6 +30,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: sans-serif;
+  font-weight: bold;
 }
 
 body {
@@ -59,9 +60,15 @@ a {
   color: #fefefe;
 }
 
+h3 {
+  color: #fefefe;
+  font-size: 18px;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
 h1,
 h2,
-h3,
 h4 {
   color: #fefefe;
   font-size: 24px;
@@ -69,13 +76,19 @@ h4 {
     "Lucida Sans", Arial, sans-serif;
 }
 
+.container {
+  text-align: center;
+  display: flexbox;
+  justify-content: center;
+}
+
 .nav {
   display: block;
   justify-items: baseline;
-  width: 95%;
+  width: 100%;
   background: #ffffff;
   box-shadow: 0 3px 6px 0 #b3b3b3;
-  border-radius: 20px;
+  border-radius: 8px;
   padding: 0.3rem;
   margin-top: 4px;
   position: fixed;
@@ -95,6 +108,7 @@ li {
   cursor: pointer;
   border-collapse: collapse;
   border-spacing: 0;
+  font-weight: bold;
 }
 
 li a {
@@ -118,10 +132,28 @@ ul li:hover {
 ul li:hover a {
   color: #ffffff;
 }
+ul li a:hover svg {
+  color: #ffffff;
+}
+
+.menu-select {
+  border-radius: 20px;
+  color: #ffffff;
+  background: var(--cor-padrao);
+}
+.menu-select a {
+  color: #ffffff;
+}
+.menu-select svg {
+  color: #ffffff;
+  
+}
+
+
 
 .logo {
-  width: 100px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 18px;
 }
 
@@ -131,14 +163,29 @@ ul li:hover a {
   flex-direction: row;
   justify-content: space-around;
   justify-items: auto;
+  margin-top: 2.5rem;
+}
+
+.box-quartos {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-around;
+  justify-items: auto;
+  margin-top: 7rem;
 }
 
 .box-pg {
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
- 
+  align-items: center;
+  justify-content: center;
+  
 }
+
+.box-pg input {
+  margin-right: 2rem;
+}
+
 .box-column {
   display: flex;
   flex-wrap: wrap;
@@ -156,14 +203,23 @@ ul li:hover a {
   text-align: center;
   color: #fefefe;
   margin: 8px;
-  border-radius: 20px;
+  border-radius: 18px;
   border-style: dashed;
   box-shadow: 0 3px 6px 0 #b3b3b3;
   text-decoration: none;
 }
 
+.texto{
+  display: grid;
+  justify-content: space-between;
+}
+.texto h2{
+  display: flex;
+  align-items: start;
+}
+
 .apartamento:hover {
-  border-radius: 22px;
+  border-radius: 18px;
   color: #ffffff;
   background: var(--cor-padrao);
 }
@@ -176,7 +232,7 @@ ul li:hover a {
   text-align: center;
   color: #fefefe;
   margin: 8px;
-  border-radius: 22px;
+  border-radius: 18px;
   border-style: groove;
   box-shadow: 0 3px 6px 0 #f31515;
   text-decoration: none;
@@ -185,7 +241,7 @@ ul li:hover a {
 }
 
 .apartamento-ativo:hover {
-  border-radius: 22px;
+  border-radius: 18px;
   color: #ffffff;
   transform: scale(1.1);
 }
@@ -198,7 +254,7 @@ ul li:hover a {
   text-align: center;
   color: #fefefe;
   margin: 8px;
-  border-radius: 22px;
+  border-radius: 18px;
   border-style: groove;
   box-shadow: 0 3px 6px 0 #f31515;
   text-decoration: none;
@@ -207,22 +263,16 @@ ul li:hover a {
 }
 
 .apartamento-reserv:hover {
-  border-radius: 22px;
+  border-radius: 18px;
   color: #ffffff;
   transform: scale(1.1);
 }
 
-.container {
-  width: 90%;
-  text-align: center;
-  align-items: center;
-  margin-left: 2%;
-}
 .btn {
-  margin-top: 12px;
+  /* margin-top: 12px; */
   width: 6rem;
   padding: 12px;
-  border-radius: 22px;
+  border-radius: 4px;
   border-style: none;
   transition: 200ms ease-in-out;
 }
@@ -234,14 +284,14 @@ ul li:hover a {
   margin: 24px;
   width: 50%;
   font-size: 24px;
-  border-radius: 20px;
+  border-radius: 4px;
   border-style: none;
   transition: 200ms ease-in-out;
 }
 
 .btn:hover,
 .btn-hosp:hover {
-  border-radius: 22px;
+  border-radius: 4px;
   color: #ffffff;
   background: var(--cor-sucess);
   cursor: pointer;
@@ -249,25 +299,26 @@ ul li:hover a {
 
 .box-form {
   box-shadow: 0 3px 6px 0 #574c4c;
-  border-radius: 22px;
+  border-radius: 4px;
   padding: 2rem;
 }
 
 input {
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 8px;
   font-size: 1.3rem;
-  border-style: none;
-  transition: .2s ease-in;
+  border-style: hidden;
+  transition: 0.2s ease-in;
+  
 }
-input:hover {
+/* input:hover {
   border-color: var(--light-red);
   transform: scale(1.02);
-}
+} */
 
 .btn-add-tipo {
   width: 100%;
-  border-radius: 10px;
+  border-radius: 4px;
   border-style: none;
   transition: 200ms ease-in-out;
   padding: 12px;
@@ -275,7 +326,7 @@ input:hover {
 }
 .btn-add-tipo:hover {
   width: 100%;
-  border-radius: 22px;
+  border-radius: 4px;
   color: #f3f3f3;
   background: var(--cor-sucess);
   box-shadow: 0 3px 6px 0 #574c4c;
@@ -285,7 +336,7 @@ input:hover {
 
 .card {
   background: var(--cor-sucess);
-  border-radius: 22px;
+  border-radius: 4px;
   border-style: 1.4px solid;
   box-shadow: 0 3px 6px 0 #574c4c;
   padding: 12px;
@@ -294,7 +345,7 @@ input:hover {
   transition: 200ms ease-in-out;
 }
 .card:hover {
-  border-radius: 22px;
+  border-radius: 4px;
   border-style: 1.4px solid;
   box-shadow: 0 3px 6px 0 #574c4c;
   padding: 12px;
@@ -305,7 +356,7 @@ input:hover {
 
 .card-danger {
   background: var(--cor-red);
-  border-radius: 22px;
+  border-radius: 4px;
   border-style: 1.4px solid;
   box-shadow: 0 3px 6px 0 #574c4c;
   padding: 12px;
@@ -314,7 +365,28 @@ input:hover {
   transition: 200ms ease-in-out;
 }
 .card-danger:hover {
-  border-radius: 22px;
+  border-radius: 4px;
+  border-style: 1.4px solid;
+  box-shadow: 0 3px 6px 0 #574c4c;
+  padding: 12px;
+  margin: 8px;
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+
+.card-yellow {
+  background: var(--cor-yellow);
+  border-radius: 4px;
+  border-style: 1.4px solid;
+  box-shadow: 0 3px 6px 0 #574c4c;
+  padding: 12px;
+  margin: 8px;
+  text-decoration: none;
+  transition: 200ms ease-in-out;
+}
+.card-yellow:hover {
+  border-radius: 4px;
   border-style: 1.4px solid;
   box-shadow: 0 3px 6px 0 #574c4c;
   padding: 12px;
@@ -329,7 +401,7 @@ input:hover {
 
 .btn-pay {
   width: 100%;
-  border-radius: 10px;
+  border-radius: 4px;
   border-style: none;
   background: rgb(171, 225, 171);
   transition: 200ms ease-in-out;
@@ -337,7 +409,7 @@ input:hover {
 }
 .btn-pay:hover {
   width: 100%;
-  border-radius: 22px;
+  border-radius: 4px;
   color: #f3f3f3;
   background: rgb(14, 242, 14);
   box-shadow: 0 3px 6px 0 #574c4c;
@@ -347,7 +419,7 @@ input:hover {
 
 .btn-cancel {
   width: 100%;
-  border-radius: 10px;
+  border-radius: 4px;
   border-style: none;
   background: rgb(243, 163, 163);
   transition: 200ms ease-in-out;
@@ -356,7 +428,7 @@ input:hover {
 
 .btn-cancel:hover {
   width: 100%;
-  border-radius: 22px;
+  border-radius: 4px;
   color: #f3f3f3;
   background: var(--cor-red);
   box-shadow: 0 3px 6px 0 #574c4c;
@@ -367,15 +439,15 @@ input:hover {
 .btn-voltar {
   display: flex;
   justify-content: start;
-  border-radius: 10px;
+  border-radius: 4px;
   border-style: none;
   background: rgb(243, 163, 163);
-  transition: .3s ease-in-out;
+  transition: 0.3s ease-in-out;
   padding: 8px;
 }
 
 .btn-voltar:hover {
-  border-radius: 10px;
+  border-radius: 4px;
   color: #f3f3f3;
   box-shadow: 0 3px 6px 0 #574c4c;
   cursor: pointer;
@@ -508,22 +580,59 @@ th {
   right: 0;
 }
 
-.box-din{
+.box-din {
   display: grid;
 
   justify-content: center;
   align-items: center;
 }
-.din{
- 
+
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+#divBusca {
+  background-color: #e0eeee;
+  border: solid 2px #5f9ea0;
+  border-radius: 10px;
+  width: 300px;
+  height: 48px;
+}
+
+#txtBusca {
+  float: left;
+  background-color: transparent;
+  padding-left: 5px;
+  font-size: 18px;
+  border: none;
+  height: 48px;
+  width: 191px;
+  outline: none;
+}
+
+#btnBusca {
+  border: hidden;
+  float: left;
+  height: 48px;
+  border-radius: 0 7px 7px 0;
+  width: 70px;
+  font-weight: bold;
+  background: #5f9ea0;
+}
+
+#divBusca img {
+  float: left;
+}
 
 @media print {
   .nav {
     display: none;
   }
-  .btn-add-tipo {
+  .btn-add-tipo,
+  .btn-cancel {
     display: none;
   }
 
